@@ -13,6 +13,8 @@ const Rating: React.FC<RatingProps> = ({ experienceLevel, rating }) => {
         return "text-blue-500";
       case "senior":
         return "text-amber-500";
+      case "mid-level":
+        return "text-amber-500";
       default:
         return "text-gray-500"; // Default for Mid-Level
     }
@@ -25,7 +27,11 @@ const Rating: React.FC<RatingProps> = ({ experienceLevel, rating }) => {
   return (
     <div className="flex items-center gap-1">
       {[...Array(filledStars)].map((_, i) => (
-        <Star key={`full-${i}`} className={`w-6 h-6 ${getColor()}`} fill="currentColor" />
+        <Star
+          key={`full-${i}`}
+          className={`w-6 h-6 ${getColor()}`}
+          fill="currentColor"
+        />
       ))}
       {hasHalfStar && <StarHalf className={`w-6 h-6 ${getColor()}`} />}
       {[...Array(emptyStars)].map((_, i) => (

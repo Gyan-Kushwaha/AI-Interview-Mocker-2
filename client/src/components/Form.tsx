@@ -4,7 +4,7 @@ const Form = () => {
   return (
     <div className=" w-screen h-screen pt-16 fixed z-10 bg-black/80  flex justify-center items-center">
       <div className="relative flex w-full max-w-[24rem] flex-col rounded-lg bg-white border border-slate-200 shadow-sm">
-        <div className="relative m-2.5 items-center flex flex-col justify-center text-white h-32 rounded-md bg-slate-800">
+        <div className="relative m-2.5 items-center flex flex-col justify-center text-white h-32 rounded-md bg-green-400">
           <div className="mb-4 text-white">
             <svg
               xmlns="http://www.w3.org/2000/svg"

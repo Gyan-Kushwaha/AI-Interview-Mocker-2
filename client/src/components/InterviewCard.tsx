@@ -1,9 +1,10 @@
 import React from "react";
+import Rating from "./Rating";
 
 const InterviewCard = () => {
   return (
     <div>
-      <div className="cursor-pointer group relative flex flex-col my-6 bg-white shadow-sm border border-slate-200 rounded-lg w-96 hover:shadow-lg transition-shadow duration-300">
+      <div className="cursor-pointer group relative flex flex-col my-6 bg-white shadow-sm border border-green-200 rounded-lg w-96 hover:shadow-lg transition-shadow duration-300">
         <div className="relative h-56 m-2.5 overflow-hidden text-white rounded-md">
           <img
             className="transition-transform duration-500 ease-[cubic-bezier(0.25, 1, 0.5, 1)] transform group-hover:scale-110"
@@ -21,17 +22,20 @@ const InterviewCard = () => {
         </div>
         <div className="px-4 pb-4 pt-0 mt-2 space-x-2">
           <button
-            className="rounded-md bg-slate-800 py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-slate-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+            className="rounded-md bg-green-400 py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-green-700 focus:shadow-none active:bg-green-700 hover:bg-green-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
             type="button"
           >
-            Read article
+            See Full Information
           </button>
           <button
-            className="rounded-md bg-slate-800 py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-slate-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+            className="rounded-md bg-green-400 py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-green-700 focus:shadow-none active:bg-green-700 hover:bg-green-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
             type="button"
           >
             Read article
           </button>
+        </div>
+        <div className="px-4 py-4">
+        <Rating experienceLevel="mid-level" rating={4}/>
         </div>
       </div>
     </div>
