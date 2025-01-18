@@ -1,42 +1,38 @@
 import React from "react";
 import Rating from "./Rating";
+import { Interview } from "../types/global";
+interface InterviewCardProps {
+  interview: Interview;
+}
 
-const InterviewCard = () => {
+const InterviewCard: React.FC<InterviewCardProps> = ({ interview }) => {
   return (
-    <div>
-      <div className="cursor-pointer group relative flex flex-col my-6 bg-white shadow-sm border border-green-200 rounded-lg w-96 hover:shadow-lg transition-shadow duration-300">
-        <div className="relative h-56 m-2.5 overflow-hidden text-white rounded-md">
-          <img
-            className="transition-transform duration-500 ease-[cubic-bezier(0.25, 1, 0.5, 1)] transform group-hover:scale-110"
-            src="https://images.unsplash.com/photo-1496436818536-e239445d3327?q=80&w=1200"
-            alt="investment-seed-round"
-          />
-        </div>
-        <div className="p-4">
-          <h6 className="mb-2 text-slate-800 text-xl font-semibold">
-            Software Developer
-          </h6>
-          <p className="text-slate-600 leading-normal font-light">
-            Overall Good
-          </p>
-        </div>
-        <div className="px-4 pb-4 pt-0 mt-2 space-x-2">
-          <button
-            className="rounded-md bg-green-400 py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-green-700 focus:shadow-none active:bg-green-700 hover:bg-green-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-            type="button"
-          >
-            See Full Information
-          </button>
-          <button
-            className="rounded-md bg-green-400 py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-green-700 focus:shadow-none active:bg-green-700 hover:bg-green-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-            type="button"
-          >
-            Read article
-          </button>
-        </div>
-        <div className="px-4 py-4">
-        <Rating experienceLevel="mid-level" rating={4}/>
-        </div>
+    <div className="cursor-pointer group relative flex flex-col my-6 bg-white shadow-sm border border-green-200 rounded-lg w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl hover:shadow-lg transition-shadow duration-300">
+      <div className="relative h-56 m-2.5 overflow-hidden text-white rounded-md">
+        <img
+          className="w-full h-full object-cover transition-transform duration-500 ease-[cubic-bezier(0.25, 1, 0.5, 1)] transform group-hover:scale-110"
+          src="/interview1.png"
+          alt="default-interview"
+        />
+      </div>
+      <div className="p-4">
+        <h6 className="mb-2 text-slate-800 text-xl font-semibold">
+          {interview.jobRole}
+        </h6>
+        <p className="text-slate-600 leading-normal font-light">
+          {interview.overallReview}
+        </p>
+      </div>
+      <div className="px-4 py-4">
+        <Rating
+          experienceLevel={interview.experienceLevel}
+          rating={interview.overallRating}
+        />
+      </div>
+      <div className="py-2 px-2">
+        <button className="inline-flex items-center justify-center w-full px-2 py-1 mb-2 text-md text-white bg-green-400 rounded-sm sm:w-auto sm:mb-0">
+          View Full Details
+        </button>
       </div>
     </div>
   );

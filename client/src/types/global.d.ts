@@ -10,6 +10,7 @@ export interface Interview {
   overallRating: number; 
   experienceLevel: "Fresher" | "Junior" | "Mid-Level" | "Senior";
   targetCompany: string;
+  skills?: string[];
   dsaQuestions?: Question[];
   technicalQuestions?: Question[];
   coreSubjectQuestions?: Question[];

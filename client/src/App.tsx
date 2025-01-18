@@ -7,6 +7,7 @@ import Form from "./components/Form";
 import Dashboard from "./pages/Dashboard";
 import { InterviewDetails } from "./pages/InterviewDetails";
 import { Interview } from "./types/global";
+import InterviewInterface from "./pages/InterviewInterface";
 
 const sampleInterview: Interview = {
   jobRole: "Frontend Developer",
@@ -61,11 +62,12 @@ function App() {
 
   return (
     <div className="bg-[#212121]">
-      <Navbar />
+      {/* <Navbar /> */}
       <div className="">
         <Routes>
           <Route path="/test" element={<Form />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/interviewinterface" element={<InterviewInterface />} />
           <Route
             path="/interviewdetails"
             element={<InterviewDetails interview={sampleInterview} />}

@@ -53,7 +53,7 @@ export const sampleInterviewList: Interview[] = [
     overallReview:
       "The interview was challenging but fair. The interviewer was friendly and provided helpful feedback.",
     overallRating: 4,
-    experienceLevel: "Mid-Level",
+    experienceLevel: "Fresher",
     targetCompany: "TechCorp Inc.",
     dsaQuestions: [
       {

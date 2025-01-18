@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Question, Interview } from "../types/global";
 import Rating from "../components/Rating";
 
+
 const QuestionList: React.FC<{ title: string; questions: Question[] }> = ({
   title,
   questions,

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Interview } from "../types/global";
+import { sampleInterviewList } from "../sampleData/sampledata";
 
 
 import InterviewCard from "../components/InterviewCard";
@@ -26,7 +26,9 @@ const Dashboard: React.FC = () => {
           Past Interviews
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <InterviewCard />
+          {sampleInterviewList.map((i,index) => (
+            <InterviewCard key={index} interview={i} />
+          ))}
         </div>
 
         {filteredInterviews.length === 0 && (
