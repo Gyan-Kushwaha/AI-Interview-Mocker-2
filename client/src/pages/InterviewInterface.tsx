@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import * as SpeechSDK from "microsoft-cognitiveservices-speech-sdk";
 import {
   Dialog,
   DialogContent,
@@ -35,6 +36,18 @@ export default function InterviewInterface() {
   const navigate = useNavigate();
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const maxQuestions = sampleInterviewQuestions.length || 0;
+
+  const AZURE_SUBSCRIPTION_KEY = import.meta.env.VITE_AZURE_SUBSCRIPTION_KEY;
+  const AZURE_REGION = import.meta.env.VITE_AZURE_REGION;
+
+  const [transcript, setTranscript] = useState(
+    "Speech-to-text content will appear here.."
+  );
+  const [isListening, setIsListening] = useState(false);
+  const [partialTranscript, setPartialTranscript] = useState("");
+  const [language, setLanguage] = useState("en-US");
+
+  const recognizerRef = useRef<SpeechSDK.SpeechRecognizer | null>(null);
 
   useEffect(() => {
     if (isCameraOn) {
@@ -81,6 +94,72 @@ export default function InterviewInterface() {
   const handleSetPreviousQuestion = () => {
     if (currentQuestion > 0) {
       setCurrentQuestion(currentQuestion - 1);
+    }
+  };
+
+  const startRecognition = () => {
+    if (!AZURE_SUBSCRIPTION_KEY || !AZURE_REGION) {
+      alert("Azure credentials are missing.");
+      return;
+    }
+
+    const speechConfig = SpeechSDK.SpeechConfig.fromSubscription(
+      AZURE_SUBSCRIPTION_KEY,
+      AZURE_REGION
+    );
+    speechConfig.speechRecognitionLanguage = language;
+
+    const audioConfig = SpeechSDK.AudioConfig.fromDefaultMicrophoneInput();
+    const recognizer = new SpeechSDK.SpeechRecognizer(
+      speechConfig,
+      audioConfig
+    );
+    recognizerRef.current = recognizer;
+
+    setTranscript("");
+    setPartialTranscript("");
+    setIsListening(true);
+
+    recognizer.recognizing = (sender, event) => {
+      sender;
+
+      setPartialTranscript(event.result.text);
+    };
+
+    recognizer.recognized = (sender, event) => {
+      sender;
+      if (event.result.reason === SpeechSDK.ResultReason.RecognizedSpeech) {
+        let finalText = event.result.text;
+        // if (language === "hi-IN") {
+        //   console.log("Transliterating Hindi text...");
+        //   finalText = transliterate(finalText);
+        // }
+
+        setTranscript((prev) => `${prev} ${finalText}`.trim());
+        setPartialTranscript("");
+      }
+    };
+
+    recognizer.startContinuousRecognitionAsync();
+  };
+
+  const stopRecognition = () => {
+    if (recognizerRef.current) {
+      recognizerRef.current.stopContinuousRecognitionAsync(() => {
+        recognizerRef.current?.close();
+        recognizerRef.current = null;
+        setIsListening(false);
+      });
+    }
+  };
+
+  const handleRecording = () => {
+    if (!isRecording) {
+      setIsRecording(true);
+      startRecognition();
+    } else {
+      setIsRecording(false);
+      stopRecognition();
     }
   };
 
@@ -146,9 +225,7 @@ export default function InterviewInterface() {
               <Button
                 onClick={handleSetPreviousQuestion}
                 className={`mt-2 ${
-                  currentQuestion === 0
-                    ? "bg-gray-700"
-                    : "bg-blue-600"
+                  currentQuestion === 0 ? "bg-gray-700" : "bg-blue-600"
                 } hover:bg-blue-800`}
               >
                 Previous
@@ -165,14 +242,15 @@ export default function InterviewInterface() {
               </Button>
             </div>
           </Card>
+          <Card className="p-6 bg-zinc-800/50 border-zinc-700 min-h-[100px]">
+            <div className="text-zinc-400">{partialTranscript}</div>
+          </Card>
 
           <Card className="p-6 bg-zinc-800/50 border-zinc-700 min-h-[300px]">
             <h2 className="text-xl font-semibold text-white mb-4">
               Your Response
             </h2>
-            <div className="text-zinc-400 italic">
-              Speech-to-text content will appear here...
-            </div>
+            <div className="text-zinc-400 italic">{transcript}</div>
           </Card>
         </div>
 
@@ -221,7 +299,7 @@ export default function InterviewInterface() {
             <Button
               variant={isRecording ? "destructive" : "default"}
               size="lg"
-              onClick={() => setIsRecording(!isRecording)}
+              onClick={handleRecording}
               className="w-40"
             >
               {isRecording ? (
