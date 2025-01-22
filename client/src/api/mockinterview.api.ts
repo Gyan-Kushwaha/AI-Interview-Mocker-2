@@ -3,7 +3,7 @@ import { MockInterview } from '@/vite-env';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-const API_URL = `${API_BASE_URL}/users`;
+const API_URL = `${API_BASE_URL}/mockinterview`;
 
 const getAuthHeaders = (token: string) => ({
   headers: {
