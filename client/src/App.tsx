@@ -8,6 +8,7 @@ import { InterviewDetails } from "./pages/InterviewDetails";
 import { Interview } from "./types/global";
 import InterviewInterface from "./pages/InterviewInterface";
 import LandingPage from "./pages/LandingPage";
+import { LoginForm } from "./components/LoginForm";
 
 const sampleInterview: Interview = {
   jobRole: "Frontend Developer",
@@ -58,19 +59,14 @@ const sampleInterview: Interview = {
 } as const;
 
 function App() {
-  const hideNavbarRoutes = ["/interviewinterface/"];
-  const shouldHideNavbar = hideNavbarRoutes.some((route) =>
-    location.pathname.startsWith(route)
-  );
 
   return (
     <div className="bg-[#212121] ">
-      {/* Conditionally render Navbar */}
-      {!shouldHideNavbar && <Navbar />}
 
       <div>
         <Routes>
           <Route path="/" element={<LandingPage />} />
+          <Route path="/login" element={<LoginForm />} />
           <Route path="/test" element={<Form />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route

@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { sampleInterviewList } from "../sampleData/sampledata";
-
 import InterviewCard from "../components/InterviewCard";
 import Loader from "../components/Loader/Loader";
-
 import Hero from "../components/Hero";
 
 const Dashboard: React.FC = () => {
@@ -14,7 +12,12 @@ const Dashboard: React.FC = () => {
     }, 2000);
   }, []);
   if (loading) {
-    return <div className="flex justify-center items-center h-screen"> <Loader /> </div>;
+    return (
+      <div className="flex justify-center items-center h-screen">
+        {" "}
+        <Loader />{" "}
+      </div>
+    );
   }
   return (
     <div>
