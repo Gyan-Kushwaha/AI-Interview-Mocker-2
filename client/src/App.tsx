@@ -8,6 +8,7 @@ import Dashboard from "./pages/Dashboard";
 import { InterviewDetails } from "./pages/InterviewDetails";
 import { Interview } from "./types/global";
 import InterviewInterface from "./pages/InterviewInterface";
+import Loader  from "./components/Loader/Loader";
 
 const sampleInterview: Interview = {
   jobRole: "Frontend Developer",
@@ -65,6 +66,7 @@ function App() {
       {/* <Navbar /> */}
       <div className="">
         <Routes>
+          <Route path="/" element={<Loader />} />
           <Route path="/test" element={<Form />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/interviewinterface" element={<InterviewInterface />} />

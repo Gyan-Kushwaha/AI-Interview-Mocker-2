@@ -24,6 +24,7 @@ import { ExitButton } from "../components/InterviewInterface/ExitButton";
 import { ScreenRecorder } from "../components/InterviewInterface/ScreenRecorder";
 import { useNavigate } from "react-router-dom";
 import { sampleInterviewQuestions } from "@/sampleData/sampleQuestions";
+import AudioVisualizer from "@/components/InterviewInterface/AudioVisualizer";
 
 export default function InterviewInterface() {
   const [isInterviewStarted, setIsInterviewStarted] = useState(!false);
@@ -315,6 +316,7 @@ export default function InterviewInterface() {
               )}
             </Button>
           </div>
+          {isRecording && <AudioVisualizer/>}
         </div>
       </div>
       <Timer />
