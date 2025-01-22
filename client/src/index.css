@@ -64,3 +64,34 @@
     @apply bg-background text-foreground;
   }
 }
+
+
+/* Scrollbar Styles */
+* {
+  scrollbar-width: thin; /* For Firefox */
+  scrollbar-color: #555 #1e1e1e; /* thumb and track color */
+}
+
+::-webkit-scrollbar {
+  width: 8px; /* Adjust the width */
+}
+
+::-webkit-scrollbar-track {
+  background: #1e1e1e; /* Darker track for dark theme */
+}
+
+::-webkit-scrollbar-thumb {
+  background: #555; /* Darker thumb */
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #777; /* Slightly lighter on hover */
+}
+
+/* Ensure the body and html can scroll */
+html, body {
+  overflow-y: auto; /* Enables vertical scrolling */
+  height: 100%;
+}
+

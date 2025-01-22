@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Question, Interview } from "../types/global";
 import Rating from "../components/Rating";
-
+import Loader from "../components/Loader/Loader";
 
 const QuestionList: React.FC<{ title: string; questions: Question[] }> = ({
   title,
@@ -11,23 +11,25 @@ const QuestionList: React.FC<{ title: string; questions: Question[] }> = ({
 
   return (
     <div className="mt-4">
-      <h3 className="text-lg font-semibold mb-2">{title}</h3>
+      <h3 className="text-lg text-zinc-100 font-semibold mb-2">{title}</h3>
       <div className="space-y-2">
         {questions.map((q, index) => (
-          <div key={index} className="border rounded-md">
+          <div key={index} className="rounded-md">
             <button
-              className="w-full text-left p-3 font-medium focus:outline-none"
+              className="w-full text-zinc-300 bg-zinc-900 text-left p-3 font-medium focus:outline-none"
               onClick={() => setOpenIndex(openIndex === index ? null : index)}
             >
               {q.question}
             </button>
             {openIndex === index && (
-              <div className="p-3 bg-gray-50">
-                <p className="mb-2">
-                  <strong>Answer:</strong> {q.answer}
+              <div className="p-3 bg-zinc-800">
+                <p className="mb-2 text-zinc-100">
+                  <strong className="text-green-500">Answer:</strong>{" "}
+                  <div className="text-zinc-200">{q.answer}</div>
                 </p>
-                <p>
-                  <strong>Review:</strong> {q.review}
+                <p className=" text-zinc-100">
+                  <strong className="text-pink-500">Review:</strong>{" "}
+                  <div className="text-zinc-200">{q.review}</div>
                 </p>
               </div>
             )}
@@ -39,11 +41,25 @@ const QuestionList: React.FC<{ title: string; questions: Question[] }> = ({
 };
 
 export function InterviewDetails({ interview }: { interview: Interview }) {
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    setTimeout(() => {
+      setLoading(false);
+    }, 2000);
+  }, []);
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        {" "}
+        <Loader />{" "}
+      </div>
+    );
+  }
   return (
     <div className="h-full flex justify-center items-center pt-44 pb-20">
-      <div className="w-full max-w-4xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
+      <div className="w-full max-w-4xl mx-auto bg-zinc-600 shadow-lg rounded-lg overflow-hidden">
         <div className="p-6">
-          <h2 className="text-2xl font-bold mb-4">
+          <h2 className="text-2xl text-white font-bold mb-4">
             {interview.jobRole} Interview Details
           </h2>
           <div className="flex items-center justify-between mb-4">
@@ -56,12 +72,16 @@ export function InterviewDetails({ interview }: { interview: Interview }) {
           </div>
           <div className="space-y-4">
             <div>
-              <h3 className="text-lg font-semibold">Target Company</h3>
-              <p>{interview.targetCompany}</p>
+              <h3 className="text-lg text-zinc-200 font-semibold">
+                Target Company
+              </h3>
+              <p className="text-zinc-300 ">{interview.targetCompany}</p>
             </div>
             <div>
-              <h3 className="text-lg font-semibold">Overall Review</h3>
-              <p>{interview.overallReview}</p>
+              <h3 className="text-lg text-zinc-200  font-semibold">
+                Overall Review
+              </h3>
+              <p className="text-zinc-300 ">{interview.overallReview}</p>
             </div>
             {interview.dsaQuestions && (
               <QuestionList

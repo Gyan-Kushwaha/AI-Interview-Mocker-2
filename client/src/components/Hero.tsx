@@ -1,4 +1,5 @@
-import { Plus, Search, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { X } from "lucide-react";
 import { useState } from "react";
 import Form from "../components/Form";
 const Hero = () => {

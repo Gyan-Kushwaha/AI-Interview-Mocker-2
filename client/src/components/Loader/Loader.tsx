@@ -1,7 +1,7 @@
 import "./index.css";
 const Loader = () => {
   return (
-    <div className="bg-[#212121] w-screen h-screen">
+    <div className="bg-[#212121] z-40 w-screen h-screen">
       <div className="socket">
         <div className="gel center-gel">
           <div className="hex-brick h1"></div>

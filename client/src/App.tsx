@@ -1,6 +1,5 @@
-import { useState } from "react";
-import { Routes, Route } from "react-router-dom";
 
+import { Routes, Route } from "react-router-dom";
 import "./App.css";
 import Navbar from "./components/Navbar";
 import Form from "./components/Form";
@@ -8,7 +7,7 @@ import Dashboard from "./pages/Dashboard";
 import { InterviewDetails } from "./pages/InterviewDetails";
 import { Interview } from "./types/global";
 import InterviewInterface from "./pages/InterviewInterface";
-import Loader  from "./components/Loader/Loader";
+import LandingPage from "./pages/LandingPage";
 
 const sampleInterview: Interview = {
   jobRole: "Frontend Developer",
@@ -59,19 +58,27 @@ const sampleInterview: Interview = {
 } as const;
 
 function App() {
-  const [count, setCount] = useState(0);
+  const hideNavbarRoutes = ["/interviewinterface/"];
+  const shouldHideNavbar = hideNavbarRoutes.some((route) =>
+    location.pathname.startsWith(route)
+  );
 
   return (
-    <div className="bg-[#212121]">
-      {/* <Navbar /> */}
-      <div className="">
+    <div className="bg-[#212121] ">
+      {/* Conditionally render Navbar */}
+      {!shouldHideNavbar && <Navbar />}
+
+      <div>
         <Routes>
-          <Route path="/" element={<Loader />} />
+          <Route path="/" element={<LandingPage />} />
           <Route path="/test" element={<Form />} />
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/interviewinterface" element={<InterviewInterface />} />
           <Route
-            path="/interviewdetails"
+            path="/interviewinterface/:id"
+            element={<InterviewInterface />}
+          />
+          <Route
+            path="/interviewdetails/:id"
             element={<InterviewDetails interview={sampleInterview} />}
           />
         </Routes>
