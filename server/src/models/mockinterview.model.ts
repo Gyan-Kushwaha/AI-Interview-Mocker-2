@@ -35,7 +35,6 @@ const mockInterviewSchema = new Schema<MockInterview>(
     },
     overallReview: {
       type: String,
-      required: true,
     },
     overallRating: {
       type: Number,

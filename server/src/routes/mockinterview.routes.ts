@@ -12,23 +12,23 @@ import authMiddleware from "../middlewares/auth.middleware";
 const router = Router();
 
 router.post(
-  "/mockinterviews",
+  "/create",
   asyncHandler(authMiddleware),
   asyncHandler(createMockInterview)
 );
-router.get("/mockinterviews", asyncHandler(authMiddleware), getMockInterviews);
+router.get("/", asyncHandler(authMiddleware), getMockInterviews);
 router.get(
-  "/mockinterviews/:id",
+  "/:id",
   asyncHandler(authMiddleware),
   asyncHandler(getMockInterviewById)
 );
 router.put(
-  "/mockinterviews/:id",
+  "/edit/:id",
   asyncHandler(authMiddleware),
   asyncHandler(editMockInterview)
 );
 router.delete(
-  "/mockinterviews/:id",
+  "/delete/:id",
   asyncHandler(authMiddleware),
   asyncHandler(deleteMockInterview)
 );
