@@ -34,3 +34,11 @@ export default interface User {
   createdAt?: Date;
   updatedAt?: Date;
 }
+
+
+export interface Notification {
+  id: string; 
+  type: 'success' | 'info' | 'warning' | 'error'; 
+  message: string; 
+}
+

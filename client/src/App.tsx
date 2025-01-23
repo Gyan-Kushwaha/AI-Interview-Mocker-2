@@ -1,14 +1,14 @@
 
 import { Routes, Route } from "react-router-dom";
 import "./App.css";
-import Navbar from "./components/Navbar";
 import Form from "./components/Form";
 import Dashboard from "./pages/Dashboard";
 import { InterviewDetails } from "./pages/InterviewDetails";
 import { Interview } from "./types/global";
 import InterviewInterface from "./pages/InterviewInterface";
 import LandingPage from "./pages/LandingPage";
-import { LoginForm } from "./components/LoginForm";
+import { LoginForm } from "./pages/LoginPage";
+import NotificationCard from "./components/Notifications/NotificationCard";
 
 const sampleInterview: Interview = {
   jobRole: "Frontend Developer",
@@ -62,7 +62,7 @@ function App() {
 
   return (
     <div className="bg-[#212121] ">
-
+      <NotificationCard/>
       <div>
         <Routes>
           <Route path="/" element={<LandingPage />} />

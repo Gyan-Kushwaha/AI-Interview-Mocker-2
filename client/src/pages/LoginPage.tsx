@@ -12,27 +12,43 @@ import { Label } from "@/components/ui/label";
 import React, { useEffect, useState } from "react";
 import Loader from "../components/Loader/Loader";
 import { loginUser } from "@/api/user.api";
+import { useNotification } from "../components/Notifications/NotificationContext";
+import { Notification } from "@/vite-env";
+import { useNavigate } from "react-router-dom";
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
-  const [loading, setLoading] = useState(true);
+  const { addNotification } = useNotification();
+  const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
   const handleLogin = async () => {
     const formData = {
       email,
       password,
     };
-    console.log(formData)
+    // console.log(formData)
     try {
       const resposne = await loginUser(formData);
-      console.log(resposne);
+      const newNotification: Notification = {
+        id: Date.now().toString(),
+        type: "success",
+        message: "Login Successful",
+      };
+      addNotification(newNotification);
+      navigate("/dashboard");
+      // console.log(resposne);
     } catch (error) {
-      // console.error("Error logging in user:", error);
-      console.log((error as any));
+      const newNotification: Notification = {
+        id: Date.now().toString(),
+        type: 'error',
+        message: `${(error as any).response.data.message}`,
+      };
+      addNotification(newNotification);
     }
   };
   useEffect(() => {
@@ -40,14 +56,18 @@ export function LoginForm({
       setLoading(false);
     }, 2000);
   }, []);
-  // if (loading) {
-  //   return (
-  //     <div className="flex justify-center items-center h-screen">
-  //       {" "}
-  //       <Loader />{" "}
-  //     </div>
-  //   );
-  // }
+
+
+  
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        {" "}
+        <Loader />{" "}
+      </div>
+    );
+  }
   return (
     <div className="h-screen w-screen flex justify-center items-center ">
       <div

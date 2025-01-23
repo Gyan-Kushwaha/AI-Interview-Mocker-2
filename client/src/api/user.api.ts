@@ -32,7 +32,7 @@ export const registerUser = async (userData: RegisterUserPayload) => {
     return response.data;
   } catch (error) {
     console.error("Error logging in user:", (error as any).response.data.message);
-    return (error as any).response.data.message;
+    throw error;
   }
 };
 
@@ -47,7 +47,7 @@ export const loginUser = async (userData: LoginUserPayload) => {
     return response.data;
   } catch (error) {
     console.error("Error in user Registration:", (error as any).response.data.message);
-    return (error as any).response.data.message;
+    throw error;
   }
 };
 
@@ -62,6 +62,6 @@ export const editUser = async (userData: EditUserPayload) => {
     return response.data;
   } catch (error) {
     console.error("Error updating user:", (error as any).response.data.message);
-    return (error as any).response.data.message;
+    throw error;
   }
 };
