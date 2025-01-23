@@ -7,7 +7,7 @@ import { InterviewDetails } from "./pages/InterviewDetails";
 import { Interview } from "./types/global";
 import InterviewInterface from "./pages/InterviewInterface";
 import LandingPage from "./pages/LandingPage";
-import { LoginForm } from "./pages/LoginPage";
+import { LoginPage } from "./pages/LoginPage";
 import NotificationCard from "./components/Notifications/NotificationCard";
 
 const sampleInterview: Interview = {
@@ -66,7 +66,7 @@ function App() {
       <div>
         <Routes>
           <Route path="/" element={<LandingPage />} />
-          <Route path="/login" element={<LoginForm />} />
+          <Route path="/login" element={<LoginPage />} />
           <Route path="/test" element={<Form />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route

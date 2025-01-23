@@ -16,7 +16,7 @@ import { useNotification } from "../components/Notifications/NotificationContext
 import { Notification } from "@/vite-env";
 import { useNavigate } from "react-router-dom";
 
-export function LoginForm({
+export function LoginPage({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
