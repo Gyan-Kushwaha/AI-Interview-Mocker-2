@@ -8,7 +8,7 @@ interface RegisterUserPayload {
   name: string;
   email: string;
   password: string;
-  firebaseUID: string;
+  firebaseUID?: string;
 }
 
 interface LoginUserPayload {

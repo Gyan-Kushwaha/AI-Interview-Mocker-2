@@ -14,7 +14,8 @@ import Loader from "../components/Loader/Loader";
 import { loginUser } from "@/api/user.api";
 import { useNotification } from "../components/Notifications/NotificationContext";
 import { Notification } from "@/vite-env";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { Eye, EyeOff } from "lucide-react";
 
 export function LoginPage({
   className,
@@ -24,6 +25,7 @@ export function LoginPage({
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   const handleLogin = async () => {
@@ -31,9 +33,8 @@ export function LoginPage({
       email,
       password,
     };
-    // console.log(formData)
     try {
-      const resposne = await loginUser(formData);
+      const response = await loginUser(formData);
       const newNotification: Notification = {
         id: Date.now().toString(),
         type: "success",
@@ -41,35 +42,31 @@ export function LoginPage({
       };
       addNotification(newNotification);
       navigate("/dashboard");
-      // console.log(resposne);
     } catch (error) {
       const newNotification: Notification = {
         id: Date.now().toString(),
-        type: 'error',
+        type: "error",
         message: `${(error as any).response.data.message}`,
       };
       addNotification(newNotification);
     }
   };
+
   useEffect(() => {
     setTimeout(() => {
       setLoading(false);
     }, 2000);
   }, []);
 
-
-  
-
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
-        {" "}
-        <Loader />{" "}
+        <Loader />
       </div>
     );
   }
   return (
-    <div className="h-screen w-screen flex justify-center items-center ">
+    <div className="h-screen w-screen flex justify-center items-center">
       <div
         className={cn("flex flex-col gap-6 max-w-4xl", className)}
         {...props}
@@ -104,12 +101,25 @@ export function LoginPage({
                       Forgot your password?
                     </a>
                   </div>
-                  <Input
-                    id="password"
-                    type="password"
-                    required
-                    onChange={(e) => setPassword(e.target.value)}
-                  />
+                  <div className="relative">
+                    <Input
+                      id="password"
+                      type={showPassword ? "text" : "password"}
+                      required
+                      onChange={(e) => setPassword(e.target.value)}
+                    />
+                    <button
+                      type="button"
+                      className="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-700"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? (
+                        <Eye className="text-red-500" />
+                      ) : (
+                        <EyeOff />
+                      )}
+                    </button>
+                  </div>
                 </div>
                 <Button onClick={handleLogin} className="w-full">
                   Login
@@ -120,9 +130,9 @@ export function LoginPage({
               </div>
               <div className="mt-4 text-center text-sm">
                 Don&apos;t have an account?{" "}
-                <a href="#" className="underline underline-offset-4">
+                <Link to="/signup" className="underline underline-offset-4">
                   Sign up
-                </a>
+                </Link>
               </div>
             </form>
           </CardContent>
