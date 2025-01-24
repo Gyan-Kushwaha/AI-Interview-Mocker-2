@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils";
+import { cn } from "@/utils/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -41,7 +41,10 @@ export function SignupPage({
 
   return (
     <div className="h-screen w-screen flex justify-center items-center">
-      <div className={cn("flex flex-col gap-6 max-w-4xl", className)} {...props}>
+      <div
+        className={cn("flex flex-col gap-6 lg:w-80 max-w-6xl", className)}
+        {...props}
+      >
         <Card className="bg-gray-200">
           <CardHeader>
             <CardTitle className="text-2xl">Sign Up</CardTitle>
@@ -86,7 +89,11 @@ export function SignupPage({
                       className="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-700"
                       onClick={() => setShowPassword(!showPassword)}
                     >
-                      {showPassword ? <Eye className="text-red-500" /> : <EyeOff />}
+                      {showPassword ? (
+                        <Eye className="text-red-500" />
+                      ) : (
+                        <EyeOff />
+                      )}
                     </button>
                   </div>
                 </div>
@@ -102,9 +109,15 @@ export function SignupPage({
                     <button
                       type="button"
                       className="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-700"
-                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      onClick={() =>
+                        setShowConfirmPassword(!showConfirmPassword)
+                      }
                     >
-                      {showConfirmPassword ? <Eye className="text-red-500" /> : <EyeOff />}
+                      {showConfirmPassword ? (
+                        <Eye className="text-red-500" />
+                      ) : (
+                        <EyeOff />
+                      )}
                     </button>
                   </div>
                 </div>
@@ -112,8 +125,14 @@ export function SignupPage({
                   Sign Up
                 </Button>
               </div>
+              <Button variant="outline" className="w-full mt-2">
+                  Continue with Google
+                </Button>
               <div className="mt-4 text-center text-sm">
-                Already have an account? <a href="/login" className="underline underline-offset-4">Login</a>
+                Already have an account?{" "}
+                <a href="/login" className="underline underline-offset-4">
+                  Login
+                </a>
               </div>
             </form>
           </CardContent>

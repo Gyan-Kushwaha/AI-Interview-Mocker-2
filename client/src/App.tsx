@@ -9,6 +9,7 @@ import InterviewInterface from "./pages/InterviewInterface";
 import LandingPage from "./pages/LandingPage";
 import { LoginPage } from "./pages/LoginPage";
 import NotificationCard from "./components/Notifications/NotificationCard";
+import { SignupPage } from "./pages/SignupPage";
 
 const sampleInterview: Interview = {
   jobRole: "Frontend Developer",
@@ -67,7 +68,7 @@ function App() {
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<LoginPage />} />
-          <Route path="/test" element={<Form />} />
+          <Route path="/signup" element={<SignupPage />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route
             path="/interviewinterface/:id"
