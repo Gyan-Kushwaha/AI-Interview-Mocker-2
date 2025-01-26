@@ -46,7 +46,7 @@ export function LoginPage({
       const newNotification: Notification = {
         id: Date.now().toString(),
         type: "error",
-        message: `${(error as any).response.data.message}`,
+        message: `${(error as any).response.data.error}`,
       };
       addNotification(newNotification);
     }

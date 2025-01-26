@@ -1,7 +1,6 @@
 
 import { Routes, Route } from "react-router-dom";
 import "./App.css";
-import Form from "./components/Form";
 import Dashboard from "./pages/Dashboard";
 import { InterviewDetails } from "./pages/InterviewDetails";
 import { Interview } from "./types/global";

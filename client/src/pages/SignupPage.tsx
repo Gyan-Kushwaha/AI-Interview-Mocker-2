@@ -15,6 +15,8 @@ import { Eye, EyeOff } from "lucide-react";
 import { signInWithPopup } from "firebase/auth";
 import { auth, googleProvider } from "@/utils/firebase/firebase";
 import { registerUser } from "@/api/user.api";
+import { useNotification } from "@/components/Notifications/NotificationContext";
+import { Notification } from "@/vite-env";
 
 export function SignupPage({
   className,
@@ -28,6 +30,7 @@ export function SignupPage({
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [firebaseUid, setFirebaseUid] = useState("");
   const navigate = useNavigate();
+  const { addNotification } = useNotification();
 
   const handleGoogleSignup = async () => {
     console.log("Firebase Config:", {
@@ -55,26 +58,53 @@ export function SignupPage({
       };
       const response = await registerUser(formData);
       console.log("Response", response);
+      const newNotification: Notification = {
+        id: Date.now().toString(),
+        type: "success",
+        message: "User Registered Successfully",
+      };
+      addNotification(newNotification);
       navigate("/dashboard");
     } catch (error) {
-      console.error("Test", error);
+      // console.error("Test", error);
+      const newNotification: Notification = {
+        id: Date.now().toString(),
+        type: "error",
+        message: `${(error as any).response.data.message}`,
+      };
+      addNotification(newNotification);
     }
   };
 
   const handleSignup = async () => {
-    if (password !== confirmPassword) {
-      alert("Passwords do not match");
-      return;
+    try {
+      if (password !== confirmPassword) {
+        alert("Passwords do not match");
+        return;
+      }
+      const formData = {
+        name,
+        email,
+        password,
+        firebaseUid: firebaseUid || "",
+      };
+      const response = await registerUser(formData);
+      const newNotification: Notification = {
+        id: Date.now().toString(),
+        type: "success",
+        message: "User Registered Successfully",
+      };
+      addNotification(newNotification);
+      navigate("/dashboard");
+    } catch (error) {
+      // console.error("Test", (error as any).response.data);
+      const newNotification: Notification = {
+        id: Date.now().toString(),
+        type: "error",
+        message: `${(error as any).response.data.error}`,
+      };
+      addNotification(newNotification);
     }
-    const formData = {
-      name,
-      email,
-      password,
-      firebaseUid: firebaseUid || "",
-    };
-    const response = await registerUser(formData);
-    console.log("Response", response);
-    navigate("/dashboard");
   };
 
   return (
