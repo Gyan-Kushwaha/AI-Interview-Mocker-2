@@ -3,13 +3,20 @@ import { sampleInterviewList } from "../sampleData/sampledata";
 import InterviewCard from "../components/InterviewCard";
 import Loader from "../components/Loader/Loader";
 import Hero from "../components/Hero";
+import { getAllInterviews } from "@/api/mockinterview.api";
 
 const Dashboard: React.FC = () => {
   const [loading, setLoading] = useState(true);
   useEffect(() => {
-    setTimeout(() => {
-      setLoading(false);
-    }, 2000);
+    const fetchInterviews = async () => {
+      try {
+        const response  = await getAllInterviews();
+        console.log("Interviews", response);
+        setLoading(false);
+      } catch (error) {
+        console.error(error);
+      }
+    }
   }, []);
   if (loading) {
     return (

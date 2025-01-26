@@ -21,7 +21,7 @@ const NotificationCard: React.FC = () => {
   }, [notifications, removeNotification]);
 
   return (
-    <div className="space-y-2 w-screen max-w-2xl fixed flex justify-end right-5 bottom-4 h-16">
+    <div className="space-y-2 w-screen z-50 max-w-2xl fixed flex justify-end right-5 bottom-4 h-16">
       {notifications.map((notification) => (
         <div
           key={notification.id}

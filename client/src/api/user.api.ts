@@ -12,8 +12,9 @@ interface RegisterUserPayload {
 }
 
 interface LoginUserPayload {
-  email: string;
-  password: string;
+  email?: string;
+  password?: string;
+  firebaseUID?: string;
 }
 
 interface EditUserPayload {

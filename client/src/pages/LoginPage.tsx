@@ -17,6 +17,9 @@ import { Notification } from "@/vite-env";
 import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 
+import { signInWithPopup } from "firebase/auth";
+import { auth, googleProvider } from "@/utils/firebase/firebase";
+
 export function LoginPage({
   className,
   ...props
@@ -51,6 +54,32 @@ export function LoginPage({
       addNotification(newNotification);
     }
   };
+
+  const handleGoogleSigin = async () => {
+      try {
+        const result = await signInWithPopup(auth, googleProvider);
+        // console.log((result as any)._tokenResponse);
+        const idToken = (result as any)._tokenResponse.idToken;
+        // console.log("idToken", idToken);
+        const loginResposne = await loginUser({firebaseUID: idToken});
+        
+        const newNotification: Notification = {
+          id: Date.now().toString(),
+          type: "success",
+          message: "Login Sucessfull",
+        };
+        addNotification(newNotification);
+        navigate("/dashboard");
+      } catch (error) {
+        // console.error("Test", error);
+        const newNotification: Notification = {
+          id: Date.now().toString(),
+          type: "error",
+          message: `${(error as any).response.data.message}`,
+        };
+        addNotification(newNotification);
+      }
+    };
 
   useEffect(() => {
     setTimeout(() => {
@@ -124,7 +153,7 @@ export function LoginPage({
                 <Button onClick={handleLogin} className="w-full">
                   Login
                 </Button>
-                <Button variant="outline" className="w-full">
+                <Button onClick={handleGoogleSigin} variant="outline" className="w-full">
                   Login with Google
                 </Button>
               </div>
