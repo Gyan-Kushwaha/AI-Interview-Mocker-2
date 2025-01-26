@@ -44,9 +44,10 @@ export default function InterviewInterface() {
   const [transcript, setTranscript] = useState(
     "Speech-to-text content will appear here.."
   );
-  const [isListening, setIsListening] = useState(false);
+  // const [isListening, setIsListening] = useState(false);
   const [partialTranscript, setPartialTranscript] = useState("");
-  const [language, setLanguage] = useState("en-US");
+  // const [language, setLanguage] = useState("en-US");
+  const language = "en-US";
 
   const recognizerRef = useRef<SpeechSDK.SpeechRecognizer | null>(null);
 
@@ -119,7 +120,7 @@ export default function InterviewInterface() {
 
     setTranscript("");
     setPartialTranscript("");
-    setIsListening(true);
+    // setIsListening(true);
 
     recognizer.recognizing = (sender, event) => {
       sender;
@@ -149,7 +150,7 @@ export default function InterviewInterface() {
       recognizerRef.current.stopContinuousRecognitionAsync(() => {
         recognizerRef.current?.close();
         recognizerRef.current = null;
-        setIsListening(false);
+        // setIsListening(false);
       });
     }
   };

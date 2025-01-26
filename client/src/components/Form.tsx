@@ -1,7 +1,10 @@
 import { createInterview } from "@/api/mockinterview.api";
 import { useState, useRef, KeyboardEvent } from "react";
 import { ExperienceLevel } from "@/vite-env";
+import { useNotification } from "@/components/Notifications/NotificationContext";
+import { Notification } from "@/vite-env";
 const Form = () => {
+  const { addNotification } = useNotification();
   const [tags, setTags] = useState<string[]>([]);
   const [input, setInput] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
@@ -31,21 +34,52 @@ const Form = () => {
 
   const handleCreateInterview = async () => {
     // console.log("Create Interview");
-    const skills = tags;
-    const formData = {
-      jobRole: jobProfile,
-      experienceLevel,
-      skills,
-      targetCompany,
-      overallReview: "",
-      overallRating: 0,
-      dsaQuestions: [],
-      technicalQuestions: [],
-      coreSubjectQuestions: [],
-    };
-    console.log("FormData:", formData);
-    const response =await createInterview(formData);
-    console.log("Response:", response);
+    try {
+      let validateForm = true;
+      if (jobProfile === "" || tags.length === 0 || targetCompany === "") {
+        const newNotification: Notification = {
+          id: Date.now().toString(),
+          type: "warning",
+          message: "Please fill all the fields",
+        };
+        addNotification(newNotification);
+        validateForm = false;
+      }
+      if (validateForm) {
+        const skills = tags;
+        const formData = {
+          jobRole: jobProfile,
+          experienceLevel,
+          skills,
+          targetCompany,
+          overallReview: "",
+          overallRating: 0,
+          dsaQuestions: [],
+          technicalQuestions: [],
+          coreSubjectQuestions: [],
+        };
+        // console.log("FormData:", formData);
+        await createInterview(formData);
+        // console.log("Response:", response);
+        const newNotification: Notification = {
+          id: Date.now().toString(),
+          type: "success",
+          message: "Interview Created Successfully",
+        };
+        addNotification(newNotification);
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+      }
+    } catch (error) {
+      // console.error("Error creating interview:");
+      const newNotification: Notification = {
+        id: Date.now().toString(),
+        type: "error",
+        message: "Error creating interview",
+      };
+      addNotification(newNotification);
+    }
   };
 
   return (

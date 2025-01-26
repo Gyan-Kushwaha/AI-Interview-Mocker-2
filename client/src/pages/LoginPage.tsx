@@ -37,7 +37,7 @@ export function LoginPage({
       password,
     };
     try {
-      const response = await loginUser(formData);
+      await loginUser(formData);
       const newNotification: Notification = {
         id: Date.now().toString(),
         type: "success",

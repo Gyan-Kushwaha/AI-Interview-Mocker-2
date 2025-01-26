@@ -68,3 +68,23 @@ export const editUser = async (userData: EditUserPayload) => {
     throw error;
   }
 };
+
+// Logout User
+export const logoutUser = async () => {
+  try {
+    const response = await axios.post(
+      `${API_URL}/logout`, 
+      {}, 
+      {
+        headers: { "Content-Type": "application/json" },
+        withCredentials: true, // Ensures the request includes credentials
+      }
+    );
+    
+    return response.data;
+  } catch (error) {
+    console.error("Error logging out user:", (error as any).response?.data?.message);
+    throw error;
+  }
+};
+

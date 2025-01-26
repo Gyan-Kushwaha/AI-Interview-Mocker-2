@@ -9,3 +9,4 @@ const handleClick = () => {
   };
   addNotification(newNotification);
 };
+handleClick();

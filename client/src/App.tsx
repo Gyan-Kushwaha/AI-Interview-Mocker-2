@@ -2,61 +2,12 @@
 import { Routes, Route } from "react-router-dom";
 import "./App.css";
 import Dashboard from "./pages/Dashboard";
-import { InterviewDetails } from "./pages/InterviewDetails";
-import { Interview } from "./types/global";
 import InterviewInterface from "./pages/InterviewInterface";
 import LandingPage from "./pages/LandingPage";
 import { LoginPage } from "./pages/LoginPage";
 import NotificationCard from "./components/Notifications/NotificationCard";
 import { SignupPage } from "./pages/SignupPage";
 
-const sampleInterview: Interview = {
-  jobRole: "Frontend Developer",
-  overallReview:
-    "The interview was challenging but fair. The interviewer was friendly and provided helpful feedback.",
-  overallRating: 4,
-  experienceLevel: "Mid-Level",
-  targetCompany: "TechCorp Inc.",
-  dsaQuestions: [
-    {
-      question: "Implement a function to reverse a linked list",
-      answer: "// Code to reverse a linked list",
-      review: "Good approach, but could be optimized for space complexity",
-    },
-  ],
-  technicalQuestions: [
-    {
-      question:
-        "Explain the difference between 'let', 'const', and 'var' in JavaScript",
-      answer:
-        "let is block-scoped and can be reassigned, const is block-scoped and cannot be reassigned, var is function-scoped and can be reassigned",
-      review: "Excellent explanation with clear examples",
-    },
-  ],
-  coreSubjectQuestions: [
-    {
-      question: "What are the key principles of RESTful API design?",
-      answer:
-        "Statelessness, Client-Server architecture, Cacheability, Layered System, Uniform Interface",
-      review:
-        "Good understanding of REST principles, but could have elaborated more on each point",
-    },
-    {
-      question: "What are the key principles of RESTful API design?",
-      answer:
-        "Statelessness, Client-Server architecture, Cacheability, Layered System, Uniform Interface",
-      review:
-        "Good understanding of REST principles, but could have elaborated more on each point",
-    },
-    {
-      question: "What are the key principles of RESTful API design?",
-      answer:
-        "Statelessness, Client-Server architecture, Cacheability, Layered System, Uniform Interface",
-      review:
-        "Good understanding of REST principles, but could have elaborated more on each point",
-    },
-  ],
-} as const;
 
 function App() {
 
@@ -73,10 +24,10 @@ function App() {
             path="/interviewinterface/:id"
             element={<InterviewInterface />}
           />
-          <Route
+          {/* <Route
             path="/interviewdetails/:id"
             element={<InterviewDetails interview={sampleInterview} />}
-          />
+          /> */}
         </Routes>
       </div>
     </div>

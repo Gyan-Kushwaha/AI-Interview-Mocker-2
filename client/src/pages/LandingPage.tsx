@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Loader from "../components/Loader/Loader";
+import Navbar from "@/components/Navbar";
 const LandingPage = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -20,6 +21,7 @@ const LandingPage = () => {
 
   return (
     <div className="py-12">
+      <Navbar />
       <section className="pt-24">
         <div className="px-12 mx-auto max-w-7xl">
           <div className="w-full mx-auto text-left md:w-11/12 xl:w-9/12 md:text-center">
