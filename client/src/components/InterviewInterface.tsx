@@ -23,20 +23,26 @@ import { Timer } from "./InterviewInterface/Timer";
 import { ExitButton } from "./InterviewInterface/ExitButton";
 import { ScreenRecorder } from "./InterviewInterface/ScreenRecorder";
 import { useNavigate } from "react-router-dom";
-import { sampleInterviewQuestions } from "@/sampleData/sampleQuestions";
 import AudioVisualizer from "@/components/InterviewInterface/AudioVisualizer";
+import { MockInterview, Question } from "@/vite-env";
 
-export default function InterviewInterface() {
+interface InterviewInterfaceProps {
+  interviewDetails: MockInterview;
+}
+
+const InterviewInterface: React.FC<InterviewInterfaceProps> = ({interviewDetails}) => {
+
   const [isInterviewStarted, setIsInterviewStarted] = useState(!false);
   const [showDialog, setShowDialog] = useState(!true);
   const [isCameraOn, setIsCameraOn] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
+  const [Questions, setQuestions] = useState<Question[]>([]);
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const navigate = useNavigate();
   const [currentQuestion, setCurrentQuestion] = useState(0);
-  const maxQuestions = sampleInterviewQuestions.length || 0;
+  const maxQuestions = Questions.length || 0;
 
   const AZURE_SUBSCRIPTION_KEY = import.meta.env.VITE_AZURE_SUBSCRIPTION_KEY;
   const AZURE_REGION = import.meta.env.VITE_AZURE_REGION;
@@ -165,6 +171,24 @@ export default function InterviewInterface() {
     }
   };
 
+
+
+  useEffect(() => {
+    const handleQuestions = async () => {
+        const CoreSubjectQuestions  = interviewDetails.coreSubjectQuestions;
+        const DSAQuestions = interviewDetails.dsaQuestions;
+        const TechStackQuestions = interviewDetails.technicalQuestions;
+        const Questions = [...TechStackQuestions || [],...CoreSubjectQuestions || []];
+        console.log(Questions);
+        setQuestions(Questions);
+    }
+    handleQuestions();
+  }, []);
+
+
+
+
+
   if (!isInterviewStarted)
     return (
       <div className="">
@@ -217,10 +241,10 @@ export default function InterviewInterface() {
         <div className="space-y-6">
           <Card className="p-6 bg-zinc-800/50 border-zinc-700">
             <h2 className="text-xl font-semibold text-white mb-4">
-              Current Question
+              Current Question {currentQuestion + 1} of {maxQuestions}  [ Category ]
             </h2>
             <p className="text-zinc-300">
-              {sampleInterviewQuestions[currentQuestion].question}
+              {Questions[currentQuestion].question}
             </p>
             <div className="w-full mt-1 flex justify-between">
               <Button
@@ -324,3 +348,6 @@ export default function InterviewInterface() {
     </div>
   );
 }
+
+
+export default InterviewInterface;

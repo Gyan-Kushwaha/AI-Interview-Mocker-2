@@ -37,7 +37,8 @@ export const getAllInterviews = async () => {
 // Get Interview by ID
 export const getInterviewByID = async (interviewID: string) => {
   try {
-    const response = await axiosInstance.get(`/${interviewID}`);
+    const response = await axiosInstance.get(`/${
+      interviewID}`);
     return response.data;
   } catch (error) {
     console.error('Error fetching interview by ID:',  (error as any).response.data.message);
@@ -48,7 +49,7 @@ export const getInterviewByID = async (interviewID: string) => {
 // Edit Interview
 export const editInterview = async (interviewID: string, interviewData: MockInterview) => {
   try {
-    const response = await axiosInstance.put(`/${interviewID}`, interviewData);
+    const response = await axiosInstance.put(`/edit/${interviewID}`, interviewData);
     return response.data;
   } catch (error) {
     console.error('Error editing interview:',  (error as any).response.data.message);

@@ -33,7 +33,7 @@ const Dashboard: React.FC = () => {
       try {
         const response = await getAllInterviews();
         setInterviews(response);
-        console.log("Interviews", response);
+        // console.log("Interviews", response);
         setLoading(false);
       } catch (error) {
         console.error(error);
