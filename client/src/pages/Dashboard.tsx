@@ -17,6 +17,7 @@ const Dashboard: React.FC = () => {
         console.error(error);
       }
     }
+    fetchInterviews();
   }, []);
   if (loading) {
     return (

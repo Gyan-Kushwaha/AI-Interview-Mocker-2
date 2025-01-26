@@ -60,9 +60,7 @@ export function LoginPage({
         const result = await signInWithPopup(auth, googleProvider);
         // console.log((result as any)._tokenResponse);
         const idToken = (result as any)._tokenResponse.idToken;
-        // console.log("idToken", idToken);
-        const loginResposne = await loginUser({firebaseUID: idToken});
-        
+        await loginUser({firebaseUID: idToken});
         const newNotification: Notification = {
           id: Date.now().toString(),
           type: "success",

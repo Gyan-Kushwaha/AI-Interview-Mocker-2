@@ -6,7 +6,7 @@ const API_URL = `${API_BASE_URL}/mockinterview`;
 
 const axiosInstance = axios.create({
   baseURL: API_URL,
-  withCredentials: true, // Ensures cookies (including auth tokens) are sent with requests
+  withCredentials: true, 
   headers: {
     'Content-Type': 'application/json',
   },
@@ -18,7 +18,7 @@ export const createInterview = async (interviewData: MockInterview) => {
     const response = await axiosInstance.post('/create', interviewData);
     return response.data;
   } catch (error) {
-    console.error('Error creating interview:', error);
+    console.error('Error creating interview:',  (error as any).response.data.message);
     throw error;
   }
 };
@@ -29,7 +29,7 @@ export const getAllInterviews = async () => {
     const response = await axiosInstance.get('/');
     return response.data;
   } catch (error) {
-    console.error('Error fetching interviews:', error);
+    console.error('Error fetching interviews:',  (error as any).response.data.message);
     throw error;
   }
 };
@@ -40,7 +40,7 @@ export const getInterviewByID = async (interviewID: string) => {
     const response = await axiosInstance.get(`/${interviewID}`);
     return response.data;
   } catch (error) {
-    console.error('Error fetching interview by ID:', error);
+    console.error('Error fetching interview by ID:',  (error as any).response.data.message);
     throw error;
   }
 };
@@ -51,7 +51,7 @@ export const editInterview = async (interviewID: string, interviewData: MockInte
     const response = await axiosInstance.put(`/${interviewID}`, interviewData);
     return response.data;
   } catch (error) {
-    console.error('Error editing interview:', error);
+    console.error('Error editing interview:',  (error as any).response.data.message);
     throw error;
   }
 };
@@ -62,7 +62,7 @@ export const deleteInterview = async (interviewID: string) => {
     const response = await axiosInstance.delete(`/delete/${interviewID}`);
     return response.data;
   } catch (error) {
-    console.error('Error deleting interview:', error);
+    console.error('Error deleting interview:',  (error as any).response.data.message);
     throw error;
   }
 };

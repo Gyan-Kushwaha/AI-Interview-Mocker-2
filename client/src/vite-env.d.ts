@@ -8,13 +8,15 @@ export interface Question {
   review: String;
 }
 
+export type ExperienceLevel = "Fresher" | "Junior" | "Mid-Level" | "Senior";
+
 export interface MockInterview {
-  _id: Types.ObjectId;
-  user: User;
+  _id?: Types.ObjectId;
+  user?: User;
   jobRole: string;
   overallReview: string;
   overallRating: number;
-  experienceLevel: "Fresher" | "Junior" | "Mid-Level" | "Senior";
+  experienceLevel: ExperienceLevel;
   targetCompany: string;
   skills?: string[];
   dsaQuestions?: Question[];

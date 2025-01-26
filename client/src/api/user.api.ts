@@ -44,7 +44,9 @@ export const loginUser = async (userData: LoginUserPayload) => {
       headers: {
         "Content-Type": "application/json",
       },
+      withCredentials: true
     });
+    console.log("response", response);
     return response.data;
   } catch (error) {
     console.error("Error in user Registration:", (error as any).response.data.message);
