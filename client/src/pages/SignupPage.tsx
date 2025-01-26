@@ -12,6 +12,9 @@ import { Label } from "@/components/ui/label";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
+import { signInWithPopup } from "firebase/auth";
+import { auth, googleProvider } from "@/utils/firebase/firebase";
+import { registerUser } from "@/api/user.api";
 
 export function SignupPage({
   className,
@@ -23,7 +26,40 @@ export function SignupPage({
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [firebaseUid, setFirebaseUid] = useState("");
   const navigate = useNavigate();
+
+  const handleGoogleSignup = async () => {
+    console.log("Firebase Config:", {
+      apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+      authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+      projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+      storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+      messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+      appId: import.meta.env.VITE_FIREBASE_APP_ID,
+      measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
+    });
+    try {
+      console.log("auth", auth);
+      const result = await signInWithPopup(auth, googleProvider);
+      console.log((result as any)._tokenResponse);
+      setName((result as any)._tokenResponse.displayName);
+      setEmail((result as any)._tokenResponse.email);
+      setFirebaseUid((result as any)._tokenResponse.user_id);
+      setPassword(`${Math.random() * 1000000}`);
+      const formData = {
+        name,
+        email,
+        password,
+        firebaseUid: firebaseUid || "",
+      };
+      const response = await registerUser(formData);
+      console.log("Response", response);
+      navigate("/dashboard");
+    } catch (error) {
+      console.error("Test", error);
+    }
+  };
 
   const handleSignup = async () => {
     if (password !== confirmPassword) {
@@ -34,8 +70,10 @@ export function SignupPage({
       name,
       email,
       password,
+      firebaseUid: firebaseUid || "",
     };
-    console.log(formData);
+    const response = await registerUser(formData);
+    console.log("Response", response);
     navigate("/dashboard");
   };
 
@@ -125,9 +163,13 @@ export function SignupPage({
                   Sign Up
                 </Button>
               </div>
-              <Button variant="outline" className="w-full mt-2">
-                  Continue with Google
-                </Button>
+              <Button
+                onClick={handleGoogleSignup}
+                variant="outline"
+                className="w-full mt-2"
+              >
+                Continue with Google
+              </Button>
               <div className="mt-4 text-center text-sm">
                 Already have an account?{" "}
                 <a href="/login" className="underline underline-offset-4">
