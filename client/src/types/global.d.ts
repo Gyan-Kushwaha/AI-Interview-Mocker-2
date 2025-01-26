@@ -5,7 +5,7 @@ interface Question {
 }
 
 export interface Interview {
-  id: string;
+  _id: string;
   jobRole: string;
   overallReview: string;
   overallRating: number; 

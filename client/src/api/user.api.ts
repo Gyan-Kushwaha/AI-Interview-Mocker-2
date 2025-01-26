@@ -22,6 +22,22 @@ interface EditUserPayload {
   email?: string;
 }
 
+export const getUser = async () => {
+  try{
+    const response = await axios.get(`${API_URL}/getuserdetails`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      withCredentials: true
+    });
+    return response.data;
+  }
+  catch(error){
+    console.error("Error getting user details:", (error as any).response.data.message);
+    throw error;
+  }
+}
+
 // Register User
 export const registerUser = async (userData: RegisterUserPayload) => {
   try {

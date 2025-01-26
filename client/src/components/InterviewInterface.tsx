@@ -19,9 +19,9 @@ import {
   Video,
   VideoOff,
 } from "lucide-react";
-import { Timer } from "../components/InterviewInterface/Timer";
-import { ExitButton } from "../components/InterviewInterface/ExitButton";
-import { ScreenRecorder } from "../components/InterviewInterface/ScreenRecorder";
+import { Timer } from "./InterviewInterface/Timer";
+import { ExitButton } from "./InterviewInterface/ExitButton";
+import { ScreenRecorder } from "./InterviewInterface/ScreenRecorder";
 import { useNavigate } from "react-router-dom";
 import { sampleInterviewQuestions } from "@/sampleData/sampleQuestions";
 import AudioVisualizer from "@/components/InterviewInterface/AudioVisualizer";
@@ -208,7 +208,6 @@ export default function InterviewInterface() {
         </h1>
         <div className="flex items-center">
           <ScreenRecorder />
-          <Button variant="outline">Logout</Button>
         </div>
       </header>
 

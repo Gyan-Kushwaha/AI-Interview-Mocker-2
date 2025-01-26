@@ -2,11 +2,11 @@
 import { Routes, Route } from "react-router-dom";
 import "./App.css";
 import Dashboard from "./pages/Dashboard";
-import InterviewInterface from "./pages/InterviewInterface";
 import LandingPage from "./pages/LandingPage";
 import { LoginPage } from "./pages/LoginPage";
 import NotificationCard from "./components/Notifications/NotificationCard";
 import { SignupPage } from "./pages/SignupPage";
+import InterviewInterfacePage from "./pages/InterviewInterfacePage";
 
 
 function App() {
@@ -22,7 +22,7 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route
             path="/interviewinterface/:id"
-            element={<InterviewInterface />}
+            element={<InterviewInterfacePage/>}
           />
           {/* <Route
             path="/interviewdetails/:id"
