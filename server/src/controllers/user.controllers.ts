@@ -3,10 +3,11 @@ import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import { UserModel } from "../models/user.model";
 import { validationResult } from "express-validator";
+import admin from "../firebase/firebase";
 
 export const registerUser = async (req: Request, res: Response) => {
   const { name, email, password, firebaseUID } = req.body;
-
+  // console.log(name,email,password,firebaseUID);
   try {
     if (!name || !email || !password) {
       return res.status(400).json({ error: "All fields are required" });
@@ -54,7 +55,12 @@ export const registerUser = async (req: Request, res: Response) => {
 };
 
 export const loginUser = async (req: Request, res: Response) => {
-  const { email, password } = req.body;
+  const { email, password,firebaseUID } = req.body;
+  if (firebaseUID) {
+    const decodedToken = await admin.auth().verifyIdToken(firebaseUID);
+    console.log("decodedToken", decodedToken);
+    res.json({ message: "Firebase UID Login Error" });
+  }
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
