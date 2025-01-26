@@ -54,21 +54,41 @@ export const registerUser = async (req: Request, res: Response) => {
   }
 };
 
-export const loginUser = async (req: Request, res: Response) => {
-  const { email, password,firebaseUID } = req.body;
-  if (firebaseUID) {
-    const decodedToken = await admin.auth().verifyIdToken(firebaseUID);
-    console.log("decodedToken", decodedToken);
-    res.json({ message: "Firebase UID Login Error" });
-  }
+export const loginUser = async (req: Request, res: Response): Promise<Response> => {
   try {
+    const { email, password, firebaseUID } = req.body;
+
+    if (firebaseUID) {
+      try {
+        const decodedToken = await admin.auth().verifyIdToken(firebaseUID);
+        if (!decodedToken?.email) {
+          return res.status(400).json({ message: "Invalid Firebase credentials" });
+        }
+        
+        const user = await UserModel.findOne({ email: decodedToken.email });
+        if (!user) {
+          return res.status(404).json({ message: "User not found" });
+        }
+        
+        return generateAndSendToken(res, user.id);
+      } catch (error) {
+        console.error("Error in Firebase authentication:", error);
+        return res.status(400).json({ message: "Invalid Firebase credentials" });
+      }
+    }
+
+    // Validate request
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
 
-    let user = await UserModel.findOne({ email });
-    if (!user || !user?.password) {
+    if (!email || !password) {
+      return res.status(400).json({ message: "Email and password are required" });
+    }
+
+    const user = await UserModel.findOne({ email });
+    if (!user || !user.password) {
       return res.status(400).json({ message: "Invalid credentials" });
     }
 
@@ -77,21 +97,29 @@ export const loginUser = async (req: Request, res: Response) => {
       return res.status(400).json({ message: "Invalid credentials" });
     }
 
-    const payload = { user: { id: user.id } };
-    const JWT_SECRET = process.env.JWT_SECRET as string;
-    jwt.sign(payload, JWT_SECRET, { expiresIn: "5h" }, (err, token) => {
-      if (err) throw err;
-      res.cookie("token", token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
-        maxAge: 18000000,
-      });
-      res.json({ message: "User Logged in Successfully" });
-    });
+    return generateAndSendToken(res, user.id);
   } catch (error) {
     console.error("Error in user login:", error);
-    res.status(500).json({ message: "Server error" });
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+const generateAndSendToken = (res: Response, userId: string): Response => {
+  const JWT_SECRET = process.env.JWT_SECRET as string;
+  const payload = { user: { id: userId } };
+
+  try {
+    const token = jwt.sign(payload, JWT_SECRET, { expiresIn: "5h" });
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 18000000,
+    });
+    return res.json({ message: "User Logged in Successfully" });
+  } catch (err) {
+    console.error("JWT Sign Error:", err);
+    return res.status(500).json({ message: "Token generation failed" });
   }
 };
 
