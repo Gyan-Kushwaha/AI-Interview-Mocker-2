@@ -7,6 +7,7 @@ import { LoginPage } from "./pages/LoginPage";
 import NotificationCard from "./components/Notifications/NotificationCard";
 import { SignupPage } from "./pages/SignupPage";
 import InterviewInterfacePage from "./pages/InterviewInterfacePage";
+import CodeEditor from "./components/CodeEdior/CodeEditor";
 
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/test" element={<CodeEditor />} />
           <Route
             path="/interviewinterface/:id"
             element={<InterviewInterfacePage/>}
