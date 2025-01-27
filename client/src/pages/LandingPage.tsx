@@ -12,7 +12,7 @@ const LandingPage = () => {
   }, []);
 
   const handleClick = () => {
-    navigate("/dashboard");
+    navigate("/login");
   };
 
   if (loading) {

@@ -18,12 +18,12 @@ export default function AudioVisualizer() {
   }, [])
 
   return (
-    <div className="w-full min-h-[300px]  p-8 flex items-center justify-center">
-      <div className="w-full max-w-3xl h-48 flex items-center gap-[2px]">
+    <div className="w-full h-[60px]  p-8 flex items-center justify-center">
+      <div className="w-full max-w-3xl h-[50px] flex items-center gap-[2px]">
         {heights.map((height, i) => (
           <div
             key={i}
-            className="flex-1 h-full flex items-center justify-center"
+            className="flex-1 h-[40px] flex items-center justify-center"
           >
             <div 
               className="w-[3px] bg-gradient-to-b from-gray-100 via-green-400 to-green-800 transition-all duration-100 ease-in-out"

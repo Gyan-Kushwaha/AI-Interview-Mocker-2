@@ -25,13 +25,16 @@ import { ScreenRecorder } from "./InterviewInterface/ScreenRecorder";
 import { useNavigate } from "react-router-dom";
 import AudioVisualizer from "@/components/InterviewInterface/AudioVisualizer";
 import { MockInterview, Question } from "@/vite-env";
+import CodeEditor from "./CodeEdior/CodeEditor";
 
 interface InterviewInterfaceProps {
   interviewDetails: MockInterview;
 }
 
-const InterviewInterface: React.FC<InterviewInterfaceProps> = ({interviewDetails}) => {
-
+const InterviewInterface: React.FC<InterviewInterfaceProps> = ({
+  interviewDetails,
+}) => {
+  const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [isInterviewStarted, setIsInterviewStarted] = useState(!false);
   const [showDialog, setShowDialog] = useState(!true);
   const [isCameraOn, setIsCameraOn] = useState(false);
@@ -171,23 +174,24 @@ const InterviewInterface: React.FC<InterviewInterfaceProps> = ({interviewDetails
     }
   };
 
-
+  const handleEditorOpen = () => {
+    setIsEditorOpen(!isEditorOpen);
+  };
 
   useEffect(() => {
     const handleQuestions = async () => {
-        const CoreSubjectQuestions  = interviewDetails.coreSubjectQuestions;
-        const DSAQuestions = interviewDetails.dsaQuestions;
-        const TechStackQuestions = interviewDetails.technicalQuestions;
-        const Questions = [...TechStackQuestions || [],...CoreSubjectQuestions || []];
-        console.log(Questions);
-        setQuestions(Questions);
-    }
+      const CoreSubjectQuestions = interviewDetails.coreSubjectQuestions;
+      // const DSAQuestions = interviewDetails.dsaQuestions;
+      const TechStackQuestions = interviewDetails.technicalQuestions;
+      const Questions = [
+        ...(TechStackQuestions || []),
+        ...(CoreSubjectQuestions || []),
+      ];
+      console.log(Questions);
+      setQuestions(Questions);
+    };
     handleQuestions();
   }, []);
-
-
-
-
 
   if (!isInterviewStarted)
     return (
@@ -232,6 +236,9 @@ const InterviewInterface: React.FC<InterviewInterfaceProps> = ({interviewDetails
         </h1>
         <div className="flex items-center">
           <ScreenRecorder />
+          <Button className="h-[35px]" variant="outline" onClick={handleEditorOpen}>{`${
+            isEditorOpen ? "Close Code Editor" : "Open Code Editor"
+          }`}</Button>
         </div>
       </header>
 
@@ -241,10 +248,11 @@ const InterviewInterface: React.FC<InterviewInterfaceProps> = ({interviewDetails
         <div className="space-y-6">
           <Card className="p-6 bg-zinc-800/50 border-zinc-700">
             <h2 className="text-xl font-semibold text-white mb-4">
-              Current Question {currentQuestion + 1} of {maxQuestions}  [ Category ]
+              Current Question {currentQuestion + 1} of {maxQuestions} [
+              Category ]
             </h2>
             <p className="text-zinc-300">
-              {Questions[currentQuestion].question}
+              {/* {Questions[currentQuestion].question} */}
             </p>
             <div className="w-full mt-1 flex justify-between">
               <Button
@@ -267,15 +275,28 @@ const InterviewInterface: React.FC<InterviewInterfaceProps> = ({interviewDetails
               </Button>
             </div>
           </Card>
-          <Card className="p-6 bg-zinc-800/50 border-zinc-700 min-h-[100px]">
-            <div className="text-zinc-400">{partialTranscript}</div>
-          </Card>
-
           <Card className="p-6 bg-zinc-800/50 border-zinc-700 min-h-[300px]">
             <h2 className="text-xl font-semibold text-white mb-4">
-              Your Response
+              Your Text Response
             </h2>
             <div className="text-zinc-400 italic">{transcript}</div>
+          </Card>
+          <Card className="p-6 bg-zinc-800/50 border-zinc-700 min-h-[200px]">
+            <h2 className="text-xl font-semibold text-white mb-4">
+              Code Submission
+            </h2>
+            <div className="">
+            <textarea
+              readOnly
+              placeholder="You can only Paste Code in this section to write code open code editor from navbar"
+              className="w-full bg-zinc-800 text-white h-full p-2 placeholder:italic"
+              onPaste={(e) => {
+                e.preventDefault();
+                const text = e.clipboardData.getData("text");
+                e.currentTarget.value = text;
+              }}
+            />
+          </div>
           </Card>
         </div>
 
@@ -322,7 +343,7 @@ const InterviewInterface: React.FC<InterviewInterfaceProps> = ({interviewDetails
             </Button>
 
             <Button
-              variant={isRecording ? "destructive" : "default"}
+              variant={isRecording ? "destructive" : "outline"}
               size="lg"
               onClick={handleRecording}
               className="w-40"
@@ -339,15 +360,22 @@ const InterviewInterface: React.FC<InterviewInterfaceProps> = ({interviewDetails
                 </>
               )}
             </Button>
+
           </div>
-          {isRecording && <AudioVisualizer/>}
+          <Card className="p-6 bg-zinc-800/50 border-zinc-700 min-h-[70px]">
+            <div className="text-zinc-400">{partialTranscript}</div>
+          </Card>
+          <Card className="p-6 bg-zinc-800/50 border-zinc-700 min-h-[70px]">
+            {isRecording && <AudioVisualizer />}
+          </Card>
+          
         </div>
       </div>
       <Timer />
       <ExitButton />
+      {isEditorOpen && <CodeEditor />}
     </div>
   );
-}
-
+};
 
 export default InterviewInterface;
