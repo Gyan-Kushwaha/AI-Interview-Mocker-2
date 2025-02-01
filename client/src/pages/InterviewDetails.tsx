@@ -4,7 +4,6 @@ import Rating from "../components/Rating";
 import Loader from "../components/Loader/Loader";
 import { getInterviewByID } from "@/api/mockinterview.api";
 import { useParams } from "react-router-dom";
-import { MockInterview } from "@/vite-env";
 
 const QuestionList: React.FC<{ title: string; questions: Question[] }> = ({
   title,
