@@ -31,9 +31,10 @@ const InterviewInterfacePage = () => {
         // console.log("Generated Questions",resposne2.data);
 
         interviewData.dsaQuestions = resposne2.data.dsaQuestions;
-        interviewData.coreSubjectQuestions =
-          resposne2.data.coreSubjectQuestions;
+        interviewData.coreSubjectQuestions = resposne2.data.coreSubjectQuestions;
         interviewData.technicalQuestions = resposne2.data.techStackQuestions;
+        interviewData.overallRating = 0;
+        interviewData.overallReview = "";
 
         // console.log("Interview Data", interviewData);
         const editedInterview = await editInterview(id || "", interviewData);
