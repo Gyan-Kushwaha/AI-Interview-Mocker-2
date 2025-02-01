@@ -86,7 +86,7 @@ export function SignupPage({
         message: "User Registered Successfully",
       };
       addNotification(newNotification);
-      navigate("/dashboard");
+      navigate("/login");
     } catch (error) {
       // console.error("Test", (error as any).response.data);
       const newNotification: Notification = {

@@ -26,26 +26,38 @@ import { useNavigate } from "react-router-dom";
 import AudioVisualizer from "@/components/InterviewInterface/AudioVisualizer";
 import { MockInterview, Question } from "@/vite-env";
 import CodeEditor from "./CodeEdior/CodeEditor";
+import Loader from "./Loader/Loader";
+import { useNotification } from "@/components/Notifications/NotificationContext";
+import { Notification } from "@/vite-env";
+import { generateReview } from "@/api/gemini.api";
 
 interface InterviewInterfaceProps {
   interviewDetails: MockInterview;
+}
+
+interface QuestionWithType extends Question {
+  type: "coreSubjectQuestions" | "technicalQuestions" | "dsaQuestions";
 }
 
 const InterviewInterface: React.FC<InterviewInterfaceProps> = ({
   interviewDetails,
 }) => {
   const [isEditorOpen, setIsEditorOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+
   const [isInterviewStarted, setIsInterviewStarted] = useState(!false);
   const [showDialog, setShowDialog] = useState(!true);
+
   const [isCameraOn, setIsCameraOn] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
-  const [Questions, setQuestions] = useState<Question[]>([]);
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const navigate = useNavigate();
-  const [currentQuestion, setCurrentQuestion] = useState(0);
+
+  const [Questions, setQuestions] = useState<QuestionWithType[]>([]);
   const maxQuestions = Questions.length || 0;
+  const [currentQuestion, setCurrentQuestion] = useState(0);
 
   const AZURE_SUBSCRIPTION_KEY = import.meta.env.VITE_AZURE_SUBSCRIPTION_KEY;
   const AZURE_REGION = import.meta.env.VITE_AZURE_REGION;
@@ -53,12 +65,18 @@ const InterviewInterface: React.FC<InterviewInterfaceProps> = ({
   const [transcript, setTranscript] = useState(
     "Speech-to-text content will appear here.."
   );
+
   // const [isListening, setIsListening] = useState(false);
   const [partialTranscript, setPartialTranscript] = useState("");
   // const [language, setLanguage] = useState("en-US");
   const language = "en-US";
-
   const recognizerRef = useRef<SpeechSDK.SpeechRecognizer | null>(null);
+
+  const [codeResponse, setCodeResponse] = useState("");
+  const [savedInterviewData, setSavedInterviewData] =
+    useState<MockInterview>(interviewDetails);
+
+  const { addNotification } = useNotification();
 
   useEffect(() => {
     if (isCameraOn) {
@@ -96,9 +114,28 @@ const InterviewInterface: React.FC<InterviewInterfaceProps> = ({
     setIsCameraOn((prev) => !prev);
   };
 
-  const handleSetNextQuestion = () => {
+  const handleSetNextQuestion = async () => {
     if (currentQuestion < maxQuestions - 1) {
       setCurrentQuestion(currentQuestion + 1);
+      console.log(interviewDetails);
+      setTranscript("");
+    }else{
+      console.log(interviewDetails);
+      try {
+        setLoading(true);
+        const generateReviewResponse =await generateReview({InterviewDetailsObject: savedInterviewData});
+        if(generateReviewResponse) {
+          navigate("/dashboard");
+        }
+      } catch (error) { 
+        console.error(error);
+        const newNotification: Notification = {
+          id: Date.now().toString(),
+          type: "error",
+          message: "Failed to generate review",
+        };
+        addNotification(newNotification);
+        }
     }
   };
 
@@ -180,18 +217,97 @@ const InterviewInterface: React.FC<InterviewInterfaceProps> = ({
 
   useEffect(() => {
     const handleQuestions = async () => {
-      const CoreSubjectQuestions = interviewDetails.coreSubjectQuestions;
-      // const DSAQuestions = interviewDetails.dsaQuestions;
-      const TechStackQuestions = interviewDetails.technicalQuestions;
-      const Questions = [
-        ...(TechStackQuestions || []),
-        ...(CoreSubjectQuestions || []),
+      const coreSubjectQuestions =
+        interviewDetails.coreSubjectQuestions?.map((q) => ({
+          ...q,
+          type: "coreSubjectQuestions" as const,
+        })) || [];
+
+      const technicalQuestions =
+        interviewDetails.technicalQuestions?.map((q) => ({
+          ...q,
+          type: "technicalQuestions" as const,
+        })) || [];
+
+      const dsaQuestions = interviewDetails.dsaQuestions?.map(q => ({
+        ...q,
+        type: "dsaQuestions" as const
+      })) || [];
+
+      const allQuestions: QuestionWithType[] = [
+        ...technicalQuestions,
+        ...coreSubjectQuestions,
+        ...dsaQuestions, 
       ];
-      console.log(Questions);
-      setQuestions(Questions);
+
+      console.log(allQuestions);
+      setQuestions(allQuestions);
+      setLoading(false);
     };
+
     handleQuestions();
   }, []);
+
+  const handleSaveResponse = () => {
+    const allResponse = `Text Response: ${transcript}\nCode Response: ${codeResponse}`;
+    const currentQuestionObj = Questions[currentQuestion];
+    const category = currentQuestionObj.type;
+
+    if (category === "technicalQuestions") {
+      const updatedTechnicalQuestions = (
+        savedInterviewData as any
+      ).technicalQuestions.map((q: Question) => {
+        if (q.question === currentQuestionObj.question) {
+          return { ...q, answer: allResponse };
+        }
+        return q;
+      });
+
+      setSavedInterviewData((prevDetails) => ({
+        ...prevDetails,
+        technicalQuestions: updatedTechnicalQuestions,
+      }));
+    } else if (category === "coreSubjectQuestions") {
+      const updatedCoreSubjectQuestions = (
+        savedInterviewData as any
+      ).coreSubjectQuestions.map((q: Question) => {
+        if (q.question === currentQuestionObj.question) {
+          return { ...q, answer: allResponse };
+        }
+        return q;
+      });
+
+      setSavedInterviewData((prevDetails) => ({
+        ...prevDetails,
+        coreSubjectQuestions: updatedCoreSubjectQuestions,
+      }));
+    } else if (category === "dsaQuestions") {
+      const updatedDsaQuestions = (savedInterviewData as any).dsaQuestions.map(
+        (q: Question) => {
+          if (q.question === currentQuestionObj.question) {
+            return { ...q, answer: allResponse };
+          }
+          return q;
+        }
+      );
+
+      setSavedInterviewData((prevDetails) => ({
+        ...prevDetails,
+        dsaQuestions: updatedDsaQuestions,
+      }));
+    }
+
+    const newNotification: Notification = {
+      id: Date.now().toString(),
+      type: "info",
+      message: "Saved Successfully",
+    };
+    addNotification(newNotification);
+
+    // Optionally, you can add a notification or log to confirm the save
+    console.log(`Response saved for ${category}`);
+    console.log(savedInterviewData);
+  };
 
   if (!isInterviewStarted)
     return (
@@ -224,6 +340,12 @@ const InterviewInterface: React.FC<InterviewInterfaceProps> = ({
       </div>
     );
 
+  if (loading)
+    return (
+      <div className="">
+        <Loader />
+      </div>
+    );
   return (
     <div className="min-h-screen bg-zinc-900">
       {/* Header */}
@@ -236,7 +358,11 @@ const InterviewInterface: React.FC<InterviewInterfaceProps> = ({
         </h1>
         <div className="flex items-center">
           <ScreenRecorder />
-          <Button className="h-[35px]" variant="outline" onClick={handleEditorOpen}>{`${
+          <Button
+            className="h-[35px]"
+            variant="outline"
+            onClick={handleEditorOpen}
+          >{`${
             isEditorOpen ? "Close Code Editor" : "Open Code Editor"
           }`}</Button>
         </div>
@@ -252,9 +378,9 @@ const InterviewInterface: React.FC<InterviewInterfaceProps> = ({
               Category ]
             </h2>
             <p className="text-zinc-300">
-              {/* {Questions[currentQuestion].question} */}
+              {Questions.length > 0 ? Questions[currentQuestion].question : ""}
             </p>
-            <div className="w-full mt-1 flex justify-between">
+            <div className="w-full mt-1 flex justify-end">
               <Button
                 onClick={handleSetPreviousQuestion}
                 className={`mt-2 ${
@@ -263,16 +389,28 @@ const InterviewInterface: React.FC<InterviewInterfaceProps> = ({
               >
                 Previous
               </Button>
-              <Button
-                onClick={handleSetNextQuestion}
-                className={`mt-2 ${
-                  currentQuestion === maxQuestions - 1
-                    ? "bg-gray-700"
-                    : "bg-green-600"
-                } hover:bg-green-800`}
-              >
-                Next
-              </Button>
+              <div className=" gap-2 ">
+                <Button
+                  onClick={handleSaveResponse}
+                  className={`mt-2 bg-amber-600 mr-2`}
+                >
+                  Save Response
+                </Button>
+                <Button
+                  onClick={handleSetNextQuestion}
+                  className={`mt-2 ${
+                    currentQuestion === maxQuestions - 1
+                      ? "bg-gray-700"
+                      : "bg-green-600"
+                  } hover:bg-green-800`}
+                >
+                  {`${
+                    currentQuestion === maxQuestions - 1
+                      ? "Submit"
+                      : "Next"
+                  }`}
+                </Button>
+              </div>
             </div>
           </Card>
           <Card className="p-6 bg-zinc-800/50 border-zinc-700 min-h-[300px]">
@@ -286,17 +424,21 @@ const InterviewInterface: React.FC<InterviewInterfaceProps> = ({
               Code Submission
             </h2>
             <div className="">
-            <textarea
-              readOnly
-              placeholder="You can only Paste Code in this section to write code open code editor from navbar"
-              className="w-full bg-zinc-800 text-white h-full p-2 placeholder:italic"
-              onPaste={(e) => {
-                e.preventDefault();
-                const text = e.clipboardData.getData("text");
-                e.currentTarget.value = text;
-              }}
-            />
-          </div>
+              <textarea
+                onChange={(e) => {
+                  setCodeResponse(e.target.value);
+                }}
+                readOnly
+                placeholder="You can only Paste Code in this section to write code open code editor from navbar"
+                className="w-full bg-zinc-800 text-white h-full p-2 placeholder:italic"
+                onPaste={(e) => {
+                  e.preventDefault();
+                  const text = e.clipboardData.getData("text");
+                  e.currentTarget.value = text;
+                  setCodeResponse(text);
+                }}
+              />
+            </div>
           </Card>
         </div>
 
@@ -360,7 +502,6 @@ const InterviewInterface: React.FC<InterviewInterfaceProps> = ({
                 </>
               )}
             </Button>
-
           </div>
           <Card className="p-6 bg-zinc-800/50 border-zinc-700 min-h-[70px]">
             <div className="text-zinc-400">{partialTranscript}</div>
@@ -368,7 +509,6 @@ const InterviewInterface: React.FC<InterviewInterfaceProps> = ({
           <Card className="p-6 bg-zinc-800/50 border-zinc-700 min-h-[70px]">
             {isRecording && <AudioVisualizer />}
           </Card>
-          
         </div>
       </div>
       <Timer />

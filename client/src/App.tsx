@@ -8,6 +8,7 @@ import NotificationCard from "./components/Notifications/NotificationCard";
 import { SignupPage } from "./pages/SignupPage";
 import InterviewInterfacePage from "./pages/InterviewInterfacePage";
 import CodeEditor from "./components/CodeEdior/CodeEditor";
+import { InterviewDetails } from "./pages/InterviewDetails";
 
 
 function App() {
@@ -26,10 +27,10 @@ function App() {
             path="/interviewinterface/:id"
             element={<InterviewInterfacePage/>}
           />
-          {/* <Route
+          <Route
             path="/interviewdetails/:id"
-            element={<InterviewDetails interview={sampleInterview} />}
-          /> */}
+            element={<InterviewDetails/>}
+          />
         </Routes>
       </div>
     </div>

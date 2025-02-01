@@ -130,7 +130,7 @@ const InterviewInterfacePage = () => {
           </Card>
         </div>
       )}
-      {interviewData && <InterviewInterface interviewDetails={interviewData} />}
+      {!loading && interviewData && <InterviewInterface interviewDetails={interviewData} />}
     </div>
   );
 };

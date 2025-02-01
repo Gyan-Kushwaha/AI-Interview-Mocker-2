@@ -2,6 +2,7 @@ interface Question {
   question: string;
   answer: string;
   review: string;
+  _id?:string
 }
 
 export interface Interview {
