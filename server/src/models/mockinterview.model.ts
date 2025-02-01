@@ -61,10 +61,12 @@ const mockInterviewSchema = new Schema<MockInterview>(
         answer: {
           type: String,
           required: true,
+          default: "",
         },
         review: {
           type: String,
           required: true,
+          default: "",
         },
       },
     ],
@@ -73,14 +75,17 @@ const mockInterviewSchema = new Schema<MockInterview>(
         question: {
           type: String,
           required: true,
+          default: "",
         },
         answer: {
           type: String,
           required: true,
+          default: "",
         },
         review: {
           type: String,
           required: true,
+          default: "",
         },
       },
     ],
@@ -93,10 +98,12 @@ const mockInterviewSchema = new Schema<MockInterview>(
         answer: {
           type: String,
           required: true,
+          default: "",
         },
         review: {
           type: String,
           required: true,
+          default: "",
         },
       },
     ],
