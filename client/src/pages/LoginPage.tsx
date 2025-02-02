@@ -49,7 +49,7 @@ export function LoginPage({
       const newNotification: Notification = {
         id: Date.now().toString(),
         type: "error",
-        message: `Login Failed`,
+        message: `${(error as any).response.data.message}`,
       };
       addNotification(newNotification);
     }

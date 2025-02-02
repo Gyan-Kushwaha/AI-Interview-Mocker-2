@@ -3,12 +3,10 @@ import { useNavigate } from "react-router-dom";
 import Loader from "../components/Loader/Loader";
 import Navbar from "@/components/Navbar";
 const LandingPage = () => {
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   useEffect(() => {
-    setTimeout(() => {
-      setLoading(false);
-    }, 2000);
+    setLoading(false);
   }, []);
 
   const handleClick = () => {

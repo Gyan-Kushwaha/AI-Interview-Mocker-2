@@ -47,6 +47,7 @@ export function SignupPage({
         firebaseUid: firebaseUid || "",
       };
       const response = await registerUser(formData);
+      response;
       // console.log("Response", response);
       const newNotification: Notification = {
         id: Date.now().toString(),

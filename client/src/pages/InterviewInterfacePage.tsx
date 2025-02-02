@@ -58,7 +58,7 @@ const InterviewInterfacePage = () => {
         setTimeout(() => {
           window.location.href = "/dashboard";
           setLoading(false);
-        }, 100000);
+        }, 5000);
       }
     };
     startInterview();
