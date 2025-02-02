@@ -44,7 +44,7 @@ const InterviewInterfacePage = () => {
         // console.log("Interview Data", interviewData);
         const editedInterview = await editInterview(id || "", interviewData);
         setInterviewData(editedInterview);
-        console.log("Edited Interview", editedInterview);
+        // console.log("Edited Interview", editedInterview);
         enterFullScreen();
         setLoading(false);
       } catch (error) {
