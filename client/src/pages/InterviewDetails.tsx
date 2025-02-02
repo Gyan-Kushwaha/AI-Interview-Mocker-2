@@ -51,7 +51,7 @@ export function InterviewDetails() {
       try {
         const interviewId = id;
         const response = await getInterviewByID(interviewId || "");
-        console.log(response);
+        // console.log(response);
         setInterview(response);
         setLoading(false);
       } catch (error) {

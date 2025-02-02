@@ -119,11 +119,11 @@ const InterviewInterface: React.FC<InterviewInterfaceProps> = ({
     if (isCurrentAnswerSaved) {
       if (currentQuestion < maxQuestions - 1) {
         setCurrentQuestion(currentQuestion + 1);
-        console.log(interviewDetails);
+        // console.log(interviewDetails);
         setTranscript("");
         setIsCurrentAnswerSaved(false);
       } else {
-        console.log(interviewDetails);
+        // console.log(interviewDetails);
         try {
           setLoading(true);
           const generateReviewResponse = await generateReview({
@@ -255,7 +255,7 @@ const InterviewInterface: React.FC<InterviewInterfaceProps> = ({
         ...dsaQuestions,
       ];
 
-      console.log(allQuestions);
+      // console.log(allQuestions);
       setQuestions(allQuestions);
       setLoading(false);
     };

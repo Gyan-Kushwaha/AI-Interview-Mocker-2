@@ -62,7 +62,7 @@ export const loginUser = async (userData: LoginUserPayload) => {
       },
       withCredentials: true
     });
-    console.log("response", response);
+    // console.log("response", response);
     return response.data;
   } catch (error) {
     console.error("Error in user Registration:", (error as any).response.data.message);

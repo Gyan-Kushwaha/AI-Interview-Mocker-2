@@ -10,7 +10,7 @@ const useScreenMonitor = () => {
       if (document.hidden) {
         setCount((prevCount) => {
           const newCount = prevCount + 1;
-          console.log(`Screen switch count: ${newCount}`);
+        //   console.log(`Screen switch count: ${newCount}`);
 
           if (newCount >= 5) {
             alert("You have switched screens multiple times. Your interview is now terminated.");

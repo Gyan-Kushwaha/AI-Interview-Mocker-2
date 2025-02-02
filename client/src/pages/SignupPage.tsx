@@ -35,7 +35,7 @@ export function SignupPage({
   const handleGoogleSignup = async () => {
     try {
       const result = await signInWithPopup(auth, googleProvider);
-      console.log((result as any)._tokenResponse);
+      // console.log((result as any)._tokenResponse);
       setName((result as any)._tokenResponse.displayName);
       setEmail((result as any)._tokenResponse.email);
       setFirebaseUid((result as any)._tokenResponse.user_id);
@@ -47,7 +47,7 @@ export function SignupPage({
         firebaseUid: firebaseUid || "",
       };
       const response = await registerUser(formData);
-      console.log("Response", response);
+      // console.log("Response", response);
       const newNotification: Notification = {
         id: Date.now().toString(),
         type: "success",
