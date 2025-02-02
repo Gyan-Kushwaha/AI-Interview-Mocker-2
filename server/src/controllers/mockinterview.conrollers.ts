@@ -18,7 +18,7 @@ export const createMockInterview = async (req: Request, res: Response) => {
       coreSubjectQuestions,
     } = req.body;
 
-    console.log(req.body);
+    // console.log(req.body);
 
     const newMockInterview = new MockInterviewModel({
       user: userId,
@@ -99,7 +99,7 @@ export const getMockInterviewById = async (req: Request, res: Response) => {
   try {
     const userId = req.user._id; // Assuming user ID is set in req.user by auth middleware
     const { id } = req.params;
-    console.log(id);
+    // console.log(id);
     const mockInterview = await MockInterviewModel.findOne({
       _id: id,
       user: userId,
