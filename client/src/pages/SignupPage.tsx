@@ -34,7 +34,6 @@ export function SignupPage({
 
   const handleGoogleSignup = async () => {
     try {
-      console.log("auth", auth);
       const result = await signInWithPopup(auth, googleProvider);
       console.log((result as any)._tokenResponse);
       setName((result as any)._tokenResponse.displayName);
@@ -55,13 +54,13 @@ export function SignupPage({
         message: "User Registered Successfully",
       };
       addNotification(newNotification);
-      navigate("/dashboard");
+      navigate("/login");
     } catch (error) {
       // console.error("Test", error);
       const newNotification: Notification = {
         id: Date.now().toString(),
         type: "error",
-        message: `${(error as any).response.data.message}`,
+        message: `${(error as any).response.data.error}`,
       };
       addNotification(newNotification);
     }

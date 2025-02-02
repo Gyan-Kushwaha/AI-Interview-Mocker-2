@@ -58,6 +58,7 @@ const InterviewInterface: React.FC<InterviewInterfaceProps> = ({
   const [Questions, setQuestions] = useState<QuestionWithType[]>([]);
   const maxQuestions = Questions.length || 0;
   const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [isCurrentAnswerSaved, setIsCurrentAnswerSaved] = useState(false);
 
   const AZURE_SUBSCRIPTION_KEY = import.meta.env.VITE_AZURE_SUBSCRIPTION_KEY;
   const AZURE_REGION = import.meta.env.VITE_AZURE_REGION;
@@ -115,35 +116,47 @@ const InterviewInterface: React.FC<InterviewInterfaceProps> = ({
   };
 
   const handleSetNextQuestion = async () => {
-    if (currentQuestion < maxQuestions - 1) {
-      setCurrentQuestion(currentQuestion + 1);
-      console.log(interviewDetails);
-      setTranscript("");
-    }else{
-      console.log(interviewDetails);
-      try {
-        setLoading(true);
-        const generateReviewResponse =await generateReview({InterviewDetailsObject: savedInterviewData});
-        if(generateReviewResponse) {
-          navigate("/dashboard");
+    if (isCurrentAnswerSaved) {
+      if (currentQuestion < maxQuestions - 1) {
+        setCurrentQuestion(currentQuestion + 1);
+        console.log(interviewDetails);
+        setTranscript("");
+        setIsCurrentAnswerSaved(false);
+      } else {
+        console.log(interviewDetails);
+        try {
+          setLoading(true);
+          const generateReviewResponse = await generateReview({
+            InterviewDetailsObject: savedInterviewData,
+          });
+          if (generateReviewResponse) {
+            navigate("/dashboard");
+          }
+        } catch (error) {
+          console.error(error);
+          const newNotification: Notification = {
+            id: Date.now().toString(),
+            type: "error",
+            message: "Failed to generate review",
+          };
+          addNotification(newNotification);
         }
-      } catch (error) { 
-        console.error(error);
-        const newNotification: Notification = {
-          id: Date.now().toString(),
-          type: "error",
-          message: "Failed to generate review",
-        };
-        addNotification(newNotification);
-        }
+      }
+    } else {
+      const newNotification: Notification = {
+        id: Date.now().toString(),
+        type: "error",
+        message: "Saved Current Response to move to next Question",
+      };
+      addNotification(newNotification);
     }
   };
 
-  const handleSetPreviousQuestion = () => {
-    if (currentQuestion > 0) {
-      setCurrentQuestion(currentQuestion - 1);
-    }
-  };
+  // const handleSetPreviousQuestion = () => {
+  //   if (currentQuestion > 0) {
+  //     setCurrentQuestion(currentQuestion - 1);
+  //   }
+  // };
 
   const startRecognition = () => {
     if (!AZURE_SUBSCRIPTION_KEY || !AZURE_REGION) {
@@ -229,15 +242,16 @@ const InterviewInterface: React.FC<InterviewInterfaceProps> = ({
           type: "technicalQuestions" as const,
         })) || [];
 
-      const dsaQuestions = interviewDetails.dsaQuestions?.map(q => ({
-        ...q,
-        type: "dsaQuestions" as const
-      })) || [];
+      const dsaQuestions =
+        interviewDetails.dsaQuestions?.map((q) => ({
+          ...q,
+          type: "dsaQuestions" as const,
+        })) || [];
 
       const allQuestions: QuestionWithType[] = [
         ...technicalQuestions,
         ...coreSubjectQuestions,
-        ...dsaQuestions, 
+        ...dsaQuestions,
       ];
 
       console.log(allQuestions);
@@ -303,10 +317,10 @@ const InterviewInterface: React.FC<InterviewInterfaceProps> = ({
       message: "Saved Successfully",
     };
     addNotification(newNotification);
-
+    setIsCurrentAnswerSaved(true);
     // Optionally, you can add a notification or log to confirm the save
-    console.log(`Response saved for ${category}`);
-    console.log(savedInterviewData);
+    // console.log(`Response saved for ${category}`);
+    // console.log(savedInterviewData);
   };
 
   if (!isInterviewStarted)
@@ -381,14 +395,14 @@ const InterviewInterface: React.FC<InterviewInterfaceProps> = ({
               {Questions.length > 0 ? Questions[currentQuestion].question : ""}
             </p>
             <div className="w-full mt-1 flex justify-end">
-              <Button
+              {/* <Button
                 onClick={handleSetPreviousQuestion}
                 className={`mt-2 ${
                   currentQuestion === 0 ? "bg-gray-700" : "bg-blue-600"
                 } hover:bg-blue-800`}
               >
                 Previous
-              </Button>
+              </Button> */}
               <div className=" gap-2 ">
                 <Button
                   onClick={handleSaveResponse}
@@ -405,9 +419,7 @@ const InterviewInterface: React.FC<InterviewInterfaceProps> = ({
                   } hover:bg-green-800`}
                 >
                   {`${
-                    currentQuestion === maxQuestions - 1
-                      ? "Submit"
-                      : "Next"
+                    currentQuestion === maxQuestions - 1 ? "Submit" : "Next"
                   }`}
                 </Button>
               </div>

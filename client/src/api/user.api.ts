@@ -48,7 +48,7 @@ export const registerUser = async (userData: RegisterUserPayload) => {
     });
     return response.data;
   } catch (error) {
-    console.error("Error logging in user:", (error as any).response.data.message);
+    console.error("Error logging in user:", (error as any).response.data.error);
     throw error;
   }
 };
