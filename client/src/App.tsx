@@ -9,6 +9,7 @@ import { SignupPage } from "./pages/SignupPage";
 import InterviewInterfacePage from "./pages/InterviewInterfacePage";
 import CodeEditor from "./components/CodeEdior/CodeEditor";
 import { InterviewDetails } from "./pages/InterviewDetails";
+import NotFound from "./pages/NotFound";
 
 
 function App() {
@@ -30,6 +31,10 @@ function App() {
           <Route
             path="/interviewdetails/:id"
             element={<InterviewDetails/>}
+          />
+          <Route
+            path="/*"
+            element={<NotFound/>}
           />
         </Routes>
       </div>
