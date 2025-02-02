@@ -177,6 +177,7 @@ const InterviewInterface: React.FC<InterviewInterfaceProps> = ({
     );
     recognizerRef.current = recognizer;
 
+    setIsCurrentAnswerSaved(false);
     setTranscript("");
     setPartialTranscript("");
     // setIsListening(true);
@@ -195,7 +196,7 @@ const InterviewInterface: React.FC<InterviewInterfaceProps> = ({
         //   console.log("Transliterating Hindi text...");
         //   finalText = transliterate(finalText);
         // }
-
+        setIsCurrentAnswerSaved(false);
         setTranscript((prev) => `${prev} ${finalText}`.trim());
         setPartialTranscript("");
       }
