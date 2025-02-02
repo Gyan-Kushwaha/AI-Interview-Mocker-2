@@ -406,9 +406,9 @@ const InterviewInterface: React.FC<InterviewInterfaceProps> = ({
               <div className=" gap-2 ">
                 <Button
                   onClick={handleSaveResponse}
-                  className={`mt-2 bg-amber-600 mr-2`}
+                  className={`mt-2 ${isCurrentAnswerSaved ? "bg-amber-900" : "bg-amber-600"} mr-2`}
                 >
-                  Save Response
+                  {isCurrentAnswerSaved ? "Saved" : "Save Response"}
                 </Button>
                 <Button
                   onClick={handleSetNextQuestion}
