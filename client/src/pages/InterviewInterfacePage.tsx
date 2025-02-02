@@ -9,14 +9,18 @@ import { generateQuestions } from "@/api/gemini.api";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import InterviewInstructions from "@/components/InterviewInterface/InterviewInstructionsComponent";
+import useScreenMonitor from "@/utils/hooks/useScreen";
 
 const InterviewInterfacePage = () => {
   const { addNotification } = useNotification();
   const [loading, setLoading] = useState(true);
   const { id } = useParams<{ id: string }>();
   const [interviewData, setInterviewData] = useState<MockInterview>();
-  const [isFullScreen, setIsFullScreen] = useState<boolean>(false);
-  const [isInterviewStarted,setIsInterviewStarted] = useState(false);
+  const [isFullScreen, setIsFullScreen] = useState<boolean>(
+    !!document.fullscreenElement
+  );
+
+  const [isInterviewStarted, setIsInterviewStarted] = useState(false);
   useEffect(() => {
     const startInterview = async () => {
       try {
@@ -31,7 +35,8 @@ const InterviewInterfacePage = () => {
         // console.log("Generated Questions",resposne2.data);
 
         interviewData.dsaQuestions = resposne2.data.dsaQuestions;
-        interviewData.coreSubjectQuestions = resposne2.data.coreSubjectQuestions;
+        interviewData.coreSubjectQuestions =
+          resposne2.data.coreSubjectQuestions;
         interviewData.technicalQuestions = resposne2.data.techStackQuestions;
         interviewData.overallRating = 0;
         interviewData.overallReview = "";
@@ -103,21 +108,24 @@ const InterviewInterfacePage = () => {
     }
   };
 
-
-  const handleStartInterview = ()=>{
+  const handleStartInterview = () => {
     enterFullScreen();
     setIsInterviewStarted(true);
-  }
- 
+  };
+
+  useScreenMonitor();
 
   if (loading) return <Loader />;
 
-  if(!isInterviewStarted) return (<div className="w-screen h-screen flex justify-center items-center">
-    <InterviewInstructions onStartInterview={handleStartInterview}/>
-  </div>
-  )
+  if (!isInterviewStarted)
+    return (
+      <div className="w-screen h-screen flex justify-center items-center">
+        <InterviewInstructions onStartInterview={handleStartInterview} />
+      </div>
+    );
 
   return (
+
     <div>
       {!isFullScreen && (
         <div className="h-screen w-screen fixed top-0 z-50 flex justify-center items-center bg-black">
@@ -126,12 +134,16 @@ const InterviewInterfacePage = () => {
               You must enter fullscreen mode to proceed with the interview.
             </h2>
             <div className="w-full flex items-center justify-center">
-              <Button onClick={enterFullScreen} variant="secondary">Enter FullScreen</Button>
+              <Button onClick={enterFullScreen} variant="secondary">
+                Enter FullScreen
+              </Button>
             </div>
           </Card>
         </div>
       )}
-      {!loading && interviewData && <InterviewInterface interviewDetails={interviewData} />}
+      {!loading && interviewData && (
+        <InterviewInterface interviewDetails={interviewData} />
+      )}
     </div>
   );
 };
