@@ -28,7 +28,7 @@ export const registerUser = async (req: Request, res: Response) => {
   const { name, email, password, firebaseUID } = req.body;
   // console.log(name,email,password,firebaseUID);
   try {
-    if (!name || !email || !password) {
+    if (!name || !email || !(firebaseUID || password)) {
       return res.status(400).json({ error: "All fields are required" });
     }
 
