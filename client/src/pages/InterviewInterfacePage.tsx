@@ -9,7 +9,6 @@ import { generateQuestions } from "@/api/gemini.api";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import InterviewInstructions from "@/components/InterviewInterface/InterviewInstructionsComponent";
-import useScreenMonitor from "@/utils/hooks/useScreen";
 
 const InterviewInterfacePage = () => {
   const { addNotification } = useNotification();
@@ -113,7 +112,7 @@ const InterviewInterfacePage = () => {
     setIsInterviewStarted(true);
   };
 
-  useScreenMonitor();
+  // useScreenMonitor();
 
   if (loading) return <Loader />;
 

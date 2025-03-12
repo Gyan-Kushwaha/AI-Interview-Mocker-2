@@ -80,11 +80,15 @@ export function ScreenRecorder() {
   };
 
   const stopRecording = () => {
-    if (mediaRecorderRef.current && isRecording) {
-      mediaRecorderRef.current.stop();
-      mediaRecorderRef.current.stream
-        .getTracks()
-        .forEach((track) => track.stop());
+    try{
+      if (mediaRecorderRef.current && isRecording) {
+        mediaRecorderRef.current.stop();
+        mediaRecorderRef.current.stream
+          .getTracks()
+          .forEach((track) => track.stop());
+      }
+    }catch(error){
+       setError("An error occurred while trying to stop screen recording. Please try again.");
     }
   };
 
