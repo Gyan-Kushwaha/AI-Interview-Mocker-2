@@ -67,7 +67,6 @@ const InterviewInterface: React.FC<InterviewInterfaceProps> = ({
     "Speech-to-text content will appear here.."
   );
 
-  // const [isListening, setIsListening] = useState(false);
   const [partialTranscript, setPartialTranscript] = useState("");
   // const [language, setLanguage] = useState("en-US");
   const language = "en-US";
