@@ -75,7 +75,6 @@ serverless deploy
 
 
 
-## 👥 Contributors
-- **Nikhil Saxena** – [GitHub](https://github.com/Cleveridiot07)
+
 
 Pull requests are welcome! 🚀
