@@ -1,15 +1,15 @@
 const app = require("./app");
 const dotenv = require("dotenv");
-
 const cors = require("cors");
-
-app.use(cors({
-  origin: "http://localhost:5173", 
-  credentials: true,              
-}));
 
 
 dotenv.config();
+
+
+app.use(cors({
+  origin: process.env.FRONTEND_URL, 
+  credentials: true,
+}));
 
 const PORT = process.env.PORT || 5000;
 
