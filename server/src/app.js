@@ -23,10 +23,11 @@ app.use(express.static("public"));
 app.use(cookieParser());
 
 // API Routes
-app.use("/health", healthRoutes);
-app.use("/users", userRoutes);
-app.use("/mockinterview", mockinterviewRoutes);
-app.use("/ai", geminiRoutes);
+// API Routes
+app.use("/api/v1/health", healthRoutes);
+app.use("/api/v1/users", userRoutes);
+app.use("/api/v1/mockinterview", mockinterviewRoutes);
+app.use("/api/v1/ai", geminiRoutes);
 
 
 module.exports = app;
