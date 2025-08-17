@@ -4,7 +4,7 @@ const cors = require("cors");
 
 
 dotenv.config();
-
+console.log("The FRONTEND_URL environment variable is: ", process.env.FRONTEND_URL);
 
 app.use(cors({
   origin: process.env.FRONTEND_URL, 
