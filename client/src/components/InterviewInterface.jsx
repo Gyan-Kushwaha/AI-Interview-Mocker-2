@@ -1,8 +1,6 @@
-
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import * as SpeechSDK from "microsoft-cognitiveservices-speech-sdk";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Camera, Mic as MicSquare, Power, Video, VideoOff } from "lucide-react";
 import { Timer } from "./InterviewInterface/Timer";
@@ -15,37 +13,105 @@ import Loader from "./Loader/Loader";
 import { useNotification } from "@/components/Notifications/NotificationContext";
 import { generateReview } from "@/api/gemini.api";
 
+
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+let recognition;
+if (SpeechRecognition) {
+  recognition = new SpeechRecognition();
+  recognition.continuous = true; 
+  recognition.interimResults = true;
+  recognition.lang = "en-US";
+}
+// ----------------------------------------------------
+
 const InterviewInterface = ({ interviewDetails }) => {
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isInterviewStarted, setIsInterviewStarted] = useState(false);
   const [isCameraOn, setIsCameraOn] = useState(false);
-  const [isRecording, setIsRecording] = useState(false);
   const [hasPermission, setHasPermission] = useState(null);
   const [questions, setQuestions] = useState([]);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [isCurrentAnswerSaved, setIsCurrentAnswerSaved] = useState(false);
-  const [transcript, setTranscript] = useState("");
-  const [partialTranscript, setPartialTranscript] = useState("");
   const [codeResponse, setCodeResponse] = useState("");
   const [savedInterviewData, setSavedInterviewData] = useState(interviewDetails);
-  
+
+  // --- State for Web Speech API ---
+  const [isListening, setIsListening] = useState(false);
+  const [transcript, setTranscript] = useState("");
+  const [partialTranscript, setPartialTranscript] = useState("");
+  // ------------------------------
+
   const videoRef = useRef(null);
   const streamRef = useRef(null);
-  const recognizerRef = useRef(null);
   const navigate = useNavigate();
   const { addNotification } = useNotification();
-  
-  const AZURE_SUBSCRIPTION_KEY = import.meta.env.VITE_AZURE_SUBSCRIPTION_KEY;
-  const AZURE_REGION = import.meta.env.VITE_AZURE_REGION;
-  const language = "en-US";
+
   const maxQuestions = questions.length;
 
+  
   useEffect(() => {
-    const coreSubjectQuestions = interviewDetails.coreSubjectQuestions?.map((q) => ({ ...q, type: "coreSubjectQuestions" })) || [];
-    const technicalQuestions = interviewDetails.technicalQuestions?.map((q) => ({ ...q, type: "technicalQuestions" })) || [];
-    const dsaQuestions = interviewDetails.dsaQuestions?.map((q) => ({ ...q, type: "dsaQuestions" })) || [];
-    const allQuestions = [...technicalQuestions, ...coreSubjectQuestions, ...dsaQuestions];
+    if (!recognition) return;
+
+    
+    recognition.onresult = (event) => {
+      let finalTranscript = "";
+      let interimTranscript = "";
+      for (let i = event.resultIndex; i < event.results.length; ++i) {
+        if (event.results[i].isFinal) {
+          finalTranscript += event.results[i][0].transcript;
+        } else {
+          interimTranscript += event.results[i][0].transcript;
+        }
+      }
+      
+      if (finalTranscript) {
+        setTranscript(prev => (prev + " " + finalTranscript).trim());
+        setIsCurrentAnswerSaved(false);
+      }
+      setPartialTranscript(interimTranscript);
+    };
+
+    recognition.onerror = (event) => {
+      console.error("Speech recognition error:", event.error);
+      addNotification({ id: Date.now().toString(), type: "error", message: `Speech recognition error: ${event.error}` });
+      setIsListening(false);
+    };
+
+    recognition.onend = () => {
+      setIsListening(false);
+    };
+
+    return () => {
+      if (recognition) {
+        recognition.stop();
+      }
+    };
+  }, [addNotification]);
+
+  const handleListen = () => {
+    if (!recognition) {
+      addNotification({ id: Date.now().toString(), type: "error", message: "Speech recognition is not supported in your browser." });
+      return;
+    }
+
+    if (isListening) {
+      recognition.stop();
+    } else {
+      setTranscript(""); 
+      setPartialTranscript("");
+      recognition.start();
+    }
+    setIsListening(!isListening);
+  };
+
+
+  useEffect(() => {
+    const allQuestions = [
+      ...(interviewDetails.technicalQuestions?.map(q => ({ ...q, type: 'technicalQuestions' })) || []),
+      ...(interviewDetails.coreSubjectQuestions?.map(q => ({ ...q, type: 'coreSubjectQuestions' })) || []),
+      ...(interviewDetails.dsaQuestions?.map(q => ({ ...q, type: 'dsaQuestions' })) || [])
+    ];
     setQuestions(allQuestions);
   }, [interviewDetails]);
 
@@ -70,7 +136,6 @@ const InterviewInterface = ({ interviewDetails }) => {
       }
     };
     cameraAction();
-
     return () => {
       if (streamRef.current) {
         streamRef.current.getTracks().forEach((track) => track.stop());
@@ -79,50 +144,6 @@ const InterviewInterface = ({ interviewDetails }) => {
   }, [isCameraOn]);
 
   const toggleCamera = () => setIsCameraOn((prev) => !prev);
-
-  const startRecognition = () => {
-    if (!AZURE_SUBSCRIPTION_KEY || !AZURE_REGION) {
-      addNotification({ id: Date.now().toString(), type: "error", message: "Azure credentials are missing." });
-      return;
-    }
-    const speechConfig = SpeechSDK.SpeechConfig.fromSubscription(AZURE_SUBSCRIPTION_KEY, AZURE_REGION);
-    speechConfig.speechRecognitionLanguage = language;
-    const audioConfig = SpeechSDK.AudioConfig.fromDefaultMicrophoneInput();
-    const recognizer = new SpeechSDK.SpeechRecognizer(speechConfig, audioConfig);
-    recognizerRef.current = recognizer;
-
-    setIsCurrentAnswerSaved(false);
-    setTranscript("");
-    setPartialTranscript("");
-
-    recognizer.recognizing = (s, e) => setPartialTranscript(e.result.text);
-    recognizer.recognized = (s, e) => {
-      if (e.result.reason === SpeechSDK.ResultReason.RecognizedSpeech) {
-        setIsCurrentAnswerSaved(false);
-        setTranscript((prev) => `${prev} ${e.result.text}`.trim());
-        setPartialTranscript("");
-      }
-    };
-    recognizer.startContinuousRecognitionAsync();
-  };
-
-  const stopRecognition = () => {
-    if (recognizerRef.current) {
-      recognizerRef.current.stopContinuousRecognitionAsync(() => {
-        recognizerRef.current?.close();
-        recognizerRef.current = null;
-      });
-    }
-  };
-
-  const handleRecording = () => {
-    setIsRecording(!isRecording);
-    if (!isRecording) {
-      startRecognition();
-    } else {
-      stopRecognition();
-    }
-  };
 
   const handleSaveResponse = () => {
     const allResponse = `Text Response: ${transcript}\nCode Response: ${codeResponse}`;
@@ -154,17 +175,21 @@ const InterviewInterface = ({ interviewDetails }) => {
       return;
     }
 
+    if (isListening) {
+      recognition.stop(); 
+    }
+
     if (currentQuestion < maxQuestions - 1) {
       setCurrentQuestion(currentQuestion + 1);
       setTranscript("");
       setCodeResponse("");
+      setPartialTranscript("");
       setIsCurrentAnswerSaved(false);
     } else {
       try {
         setIsSubmitting(true);
-        const generateReviewResponse = await generateReview({
-          interviewDetails: savedInterviewData, 
-        });
+        const finalPayload = { interviewDetails: savedInterviewData };
+        const generateReviewResponse = await generateReview(finalPayload);
         if (generateReviewResponse) {
           addNotification({ id: Date.now().toString(), type: "success", message: "Review generated! Redirecting..." });
           navigate("/dashboard");
@@ -196,7 +221,7 @@ const InterviewInterface = ({ interviewDetails }) => {
       </Dialog>
     );
   }
-  
+
   if (isSubmitting) return <Loader />;
 
   return (
@@ -231,13 +256,19 @@ const InterviewInterface = ({ interviewDetails }) => {
               </Card>
               <Card className="p-6 bg-zinc-800/50 border-zinc-700 min-h-[200px]">
                 <h2 className="text-xl text-white font-semibold mb-4">Your Verbal Response</h2>
-                <p className="text-zinc-300 italic">{transcript || "Your transcribed speech will appear here."}</p>
+                <p className="text-zinc-300 italic">
+                  {transcript}
+                  <span className="text-zinc-500">{partialTranscript}</span>
+                </p>
               </Card>
               <Card className="p-6 bg-zinc-800/50 border-zinc-700 min-h-[150px]">
                 <h2 className="text-xl text-white font-semibold mb-4">Code Submission</h2>
                 <textarea
                   value={codeResponse}
-                  onChange={(e) => setCodeResponse(e.target.value)}
+                  onChange={(e) => {
+                    setCodeResponse(e.target.value);
+                    setIsCurrentAnswerSaved(false); // Code change means answer is unsaved
+                  }}
                   placeholder="Paste your code here, or type directly. To use a full editor, click 'Open Code Editor'."
                   className="w-full bg-zinc-800 h-full p-2 placeholder:italic text-zinc-200 rounded"
                 />
@@ -257,14 +288,14 @@ const InterviewInterface = ({ interviewDetails }) => {
                 <Button variant={isCameraOn ? "default" : "destructive"} onClick={toggleCamera} className="w-40">
                   {isCameraOn ? <><Video className="mr-2 h-4 w-4" /> On</> : <><VideoOff className="mr-2 h-4 w-4" /> Off</>}
                 </Button>
-                <Button  variant={isRecording ? "destructive" : "outline"} onClick={handleRecording} className="w-40 text-black">
-                  {isRecording ? <><Power className="mr-2 h-4 w-4" /> Stop</> : <><MicSquare className="mr-2 h-4 w-4" /> Record</>}
+                <Button variant={isListening ? "destructive" : "outline"} onClick={handleListen} className="w-40 text-black">
+                  {isListening ? <><Power className="mr-2 h-4 w-4" /> Stop</> : <><MicSquare className="mr-2 h-4 w-4" /> Record</>}
                 </Button>
               </div>
               <Card className="p-6 bg-zinc-800/50 border-zinc-700 min-h-[70px]">
                 <p className="text-zinc-400 italic">{partialTranscript || "Real-time speech appears here..."}</p>
               </Card>
-              {isRecording && <AudioVisualizer />}
+              {isListening && <AudioVisualizer />}
             </div>
           </>
         ) : (
