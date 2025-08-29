@@ -1,45 +1,45 @@
-import { logoutUser } from "@/api/user.api";
+import { logoutUser, getUser } from "@/api/user.api";
 import { useNavigate } from "react-router-dom";
 import { useNotification } from "@/components/Notifications/NotificationContext";
 import { useState, useEffect } from "react";
-import Cookies from 'js-cookie';
 
 const Navbar = () => {
   const navigate = useNavigate();
   const { addNotification } = useNotification();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoading, setIsLoading] = useState(true); // Prevents button flash
 
+  // Check the user's login status when the component first loads
   useEffect(() => {
-    // **** CHANGE: Check for the new readable 'isLoggedIn' cookie ****
-    const loggedInFlag = Cookies.get('isLoggedIn');
-
-    // Cookies store values as strings, so we check against 'true'
-    if (loggedInFlag === 'true') {
-      setIsLoggedIn(true);
-    } else {
-      setIsLoggedIn(false);
-    }
-  }, []); // The empty array ensures this runs only once on mount
+    const checkAuthStatus = async () => {
+      try {
+        await getUser();
+        setIsLoggedIn(true); // If API call succeeds, user is logged in
+      } catch (error) {
+        setIsLoggedIn(false); // If API call fails, user is not logged in
+      } finally {
+        setIsLoading(false); // Done checking
+      }
+    };
+    checkAuthStatus();
+  }, []); // The empty array ensures this runs only once
 
   const handleLogout = async () => {
-    // Update the UI immediately
-    setIsLoggedIn(false);
-    navigate("/login");
-
-    // Let the backend handle clearing the cookies while we update the UI
     try {
       await logoutUser();
+      setIsLoggedIn(false); // Immediately update the UI
       addNotification({
         id: Date.now().toString(),
         type: "success",
         message: "Logout Successful",
       });
+      navigate("/login"); 
     } catch (error) {
-      console.error("Server logout failed", error);
+      console.error("Logout failed", error);
       addNotification({
         id: Date.now().toString(),
         type: "error",
-        message: "Logout failed on the server. Please try again.",
+        message: "Logout failed. Please try again.",
       });
     }
   };
@@ -64,21 +64,23 @@ const Navbar = () => {
             </a>
           </div>
           <div className="flex items-center justify-end gap-3">
-            {/* The button will now show instantly based on the 'isLoggedIn' cookie */}
-            {isLoggedIn ? (
-              <button
-                className="inline-flex items-center justify-center rounded-xl bg-black px-3 py-2 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-gray-300 transition-all duration-150"
-                onClick={handleLogout}
-              >
-                Logout
-              </button>
-            ) : (
-              <button
-                className="inline-flex items-center justify-center rounded-xl bg-black px-3 py-2 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-gray-300 transition-all duration-150"
-                onClick={handleLogIn}
-              >
-                Login
-              </button>
+            {/* Conditionally render the correct button based on login state */}
+            {!isLoading && (
+              isLoggedIn ? (
+                <button
+                  className="inline-flex items-center justify-center rounded-xl bg-black px-3 py-2 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-gray-300 transition-all duration-150"
+                  onClick={handleLogout}
+                >
+                  Logout
+                </button>
+              ) : (
+                <button
+                  className="inline-flex items-center justify-center rounded-xl bg-black px-3 py-2 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-gray-300 transition-all duration-150"
+                  onClick={handleLogIn}
+                >
+                  Login
+                </button>
+              )
             )}
           </div>
         </div>

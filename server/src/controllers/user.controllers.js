@@ -20,7 +20,7 @@ const getUser = async (req, res) => {
   try {
     const user = await UserModel.findById(req.user.id).select("-password");
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+        return res.status(404).json({ message: "User not found" });
     }
     res.status(200).json(user);
   } catch (error) {
@@ -85,14 +85,6 @@ const loginUser = async (req, res) => {
     }
 
     generateTokenAndSetCookie(res, user.id);
-
-    // **** CHANGE 1: Added the readable UI flag cookie ****
-    res.cookie("isLoggedIn", "true", {
-      secure: true,
-      sameSite: "none",
-      maxAge: 18000000, // 5 hours
-    });
-
     res.status(200).json({ message: "Logged in successfully" });
 
   } catch (error) {
@@ -108,13 +100,6 @@ const logOutUser = (req, res) => {
     secure: process.env.NODE_ENV === "production",
     sameSite: "strict",
   });
-  
-  // **** CHANGE 2: Clear the UI flag cookie on logout ****
-  res.clearCookie("isLoggedIn", {
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
-  });
-
   res.status(200).json({ message: "Logged out successfully" });
 };
 
