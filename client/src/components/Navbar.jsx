@@ -9,23 +9,24 @@ const Navbar = () => {
   const { addNotification } = useNotification();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  
   useEffect(() => {
-    const token = Cookies.get('token'); 
-    if (token) {
+    // **** CHANGE: Check for the new readable 'isLoggedIn' cookie ****
+    const loggedInFlag = Cookies.get('isLoggedIn');
+
+    // Cookies store values as strings, so we check against 'true'
+    if (loggedInFlag === 'true') {
       setIsLoggedIn(true);
     } else {
       setIsLoggedIn(false);
     }
-  }, []); 
+  }, []); // The empty array ensures this runs only once on mount
 
   const handleLogout = async () => {
-   
+    // Update the UI immediately
     setIsLoggedIn(false);
-    Cookies.remove('token'); 
     navigate("/login");
 
-    
+    // Let the backend handle clearing the cookies while we update the UI
     try {
       await logoutUser();
       addNotification({
@@ -63,7 +64,7 @@ const Navbar = () => {
             </a>
           </div>
           <div className="flex items-center justify-end gap-3">
-            {}
+            {/* The button will now show instantly based on the 'isLoggedIn' cookie */}
             {isLoggedIn ? (
               <button
                 className="inline-flex items-center justify-center rounded-xl bg-black px-3 py-2 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-gray-300 transition-all duration-150"
